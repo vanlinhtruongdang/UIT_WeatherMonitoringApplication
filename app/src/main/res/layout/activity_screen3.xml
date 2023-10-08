@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Screen3">
+    <ImageView
+        android:id="@+id/iv_bgr3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/bgr1_2" />\
+    <ImageView
+        android:id="@+id/bgr_signin3"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/bgr_signup"
+        app:layout_constraintVertical_bias="1"/>
+    <EditText
+        android:id="@+id/et_username3"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:drawableLeft="@drawable/ic_user"
+        android:drawablePadding="10dp"
+        android:hint="Username"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bgr_signin3"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <EditText
+        android:id="@+id/et_password3"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:drawableLeft="@drawable/ic_password"
+        android:drawablePadding="10dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_username3"
+        app:layout_constraintVertical_bias="0.05"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_entersignin"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:background="@drawable/btn_border1"
+        android:text="SIGN IN"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_bgr3"
+        app:layout_constraintEnd_toEndOf="@+id/et_password3"
+        app:layout_constraintStart_toStartOf="@+id/et_password3"
+        app:layout_constraintTop_toBottomOf="@+id/et_password3"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="292dp"
+        android:layout_height="77dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/bgr_signin3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bgr_signin3"
+        app:layout_constraintVertical_bias="0.07"
+        app:srcCompat="@drawable/txt_welcomeback2x" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_google3"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:background="@drawable/btn_border2"
+        android:text="SIGN IN WITH GOOGLE"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_bgr3"
+        app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
+        app:layout_constraintStart_toStartOf="@+id/btn_entersignin"
+        app:layout_constraintTop_toBottomOf="@+id/btn_entersignin" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OR"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_google3"
+        app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/btn_entersignin"
+        app:layout_constraintTop_toBottomOf="@+id/btn_entersignin" />
+</androidx.constraintlayout.widget.ConstraintLayout>
