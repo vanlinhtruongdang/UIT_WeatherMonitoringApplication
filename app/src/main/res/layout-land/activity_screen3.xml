@@ -57,14 +57,13 @@
         android:drawablePadding="10dp"
         android:hint="Password"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_entersignin"
         app:layout_constraintEnd_toEndOf="@+id/et_username3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="@+id/et_username3"
-        app:layout_constraintTop_toBottomOf="@+id/et_username3"
-        app:layout_constraintVertical_bias="0.112" />
+        app:layout_constraintTop_toBottomOf="@+id/et_username3" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_entersignin"
@@ -73,12 +72,11 @@
         android:background="@drawable/btn_border1"
         android:text="SIGN IN"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_bgr3"
+        app:layout_constraintBottom_toTopOf="@+id/tv_or"
         app:layout_constraintEnd_toEndOf="@+id/et_password3"
-        app:layout_constraintHorizontal_bias="0.42"
         app:layout_constraintStart_toStartOf="@+id/et_password3"
         app:layout_constraintTop_toBottomOf="@+id/et_password3"
-        app:layout_constraintVertical_bias="0.317" />
+        app:layout_constraintVertical_bias="1"/>
 
     <ImageView
         android:id="@+id/imageView6"
@@ -106,6 +104,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
+        android:id="@+id/tv_or"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintVertical_bias="1"
