@@ -85,13 +85,13 @@
         app:layout_constraintTop_toTopOf="@+id/bgr_signin3"
         app:layout_constraintVertical_bias="0.07"
         app:srcCompat="@drawable/txt_welcomeback4x" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_google3"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:background="@drawable/btn_border2"
-        android:text="SIGN IN WITH GOOGLE"
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="224dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:text="Reset your password"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/iv_bgr3"
         app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
         app:layout_constraintStart_toStartOf="@+id/btn_entersignin"
@@ -102,7 +102,7 @@
         android:layout_height="wrap_content"
         android:text="OR"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_google3"
+        app:layout_constraintBottom_toTopOf="@+id/btn_reset"
         app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/btn_entersignin"

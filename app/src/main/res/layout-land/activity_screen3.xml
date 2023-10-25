@@ -26,7 +26,7 @@
 
     <ImageView
         android:id="@+id/bgr_signin3"
-        android:layout_width="match_parent"
+        android:layout_width="650dp"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bgr_signin3"
-        app:layout_constraintVertical_bias="0.314" />
+        app:layout_constraintVertical_bias="0.247" />
 
     <EditText
         android:id="@+id/et_password3"
@@ -78,7 +78,7 @@
         app:layout_constraintHorizontal_bias="0.42"
         app:layout_constraintStart_toStartOf="@+id/et_password3"
         app:layout_constraintTop_toBottomOf="@+id/et_password3"
-        app:layout_constraintVertical_bias="0.278" />
+        app:layout_constraintVertical_bias="0.317" />
 
     <ImageView
         android:id="@+id/imageView6"
@@ -86,10 +86,35 @@
         android:layout_height="77dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/bgr_signin3"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/bgr_signin3"
         app:layout_constraintTop_toTopOf="@+id/bgr_signin3"
-        app:layout_constraintVertical_bias="0.042"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/txt_welcomeback4x" />
+
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="224dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:text="Reset your password"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_bgr3"
+        app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
+        app:layout_constraintStart_toStartOf="@+id/btn_entersignin"
+        app:layout_constraintTop_toBottomOf="@+id/btn_entersignin"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintVertical_bias="1"
+        android:text="OR"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_reset"
+        app:layout_constraintEnd_toEndOf="@+id/btn_entersignin"
+        app:layout_constraintStart_toStartOf="@+id/btn_entersignin"
+        app:layout_constraintTop_toBottomOf="@+id/btn_entersignin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
