@@ -16,7 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/bgr1_2" />
+            app:srcCompat="@drawable/bgr_main" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -25,6 +27,15 @@
         android:layout_height="match_parent"
         tools:context=".Screen2">
 
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="187dp"
+            android:layout_height="180dp"
+            app:layout_constraintBottom_toTopOf="@+id/bgr_signup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo2" />
         <ImageView
             android:id="@+id/bgr_signup"
             android:layout_width="match_parent"
@@ -110,7 +121,9 @@
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:background="@drawable/btn_border1"
+            android:onClick="signUpClicked"
             android:text="SIGN UP"
+            android:textSize="18dp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/et_cf_pass"
