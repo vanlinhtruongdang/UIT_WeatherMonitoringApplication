@@ -81,7 +81,7 @@
             android:layout_marginTop="30dp"/>
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/logo_uit"
             android:layout_width="273dp"
             android:layout_height="241dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -97,9 +97,9 @@
             android:textColor="@android:color/black"
             android:textSize="20dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/imageView3"
-            app:layout_constraintStart_toStartOf="@+id/imageView3"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+            app:layout_constraintEnd_toEndOf="@+id/logo_uit"
+            app:layout_constraintStart_toStartOf="@+id/logo_uit"
+            app:layout_constraintTop_toBottomOf="@+id/logo_uit" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

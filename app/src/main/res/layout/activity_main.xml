@@ -95,7 +95,7 @@
             app:layout_constraintVertical_bias="0.2" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/logo_uit"
             android:layout_width="231dp"
             android:layout_height="187dp"
             app:layout_constraintBottom_toTopOf="@+id/btn_signin"
@@ -105,17 +105,18 @@
             app:srcCompat="@drawable/logo2" />
 
         <TextView
+            android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="METEOROLOGY MONITORING"
-            android:textSize="20dp"
+            android:textSize="25dp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:layout_marginBottom="25dp"
             app:layout_constraintBottom_toTopOf="@+id/btn_signin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+            app:layout_constraintTop_toBottomOf="@+id/logo_uit" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
