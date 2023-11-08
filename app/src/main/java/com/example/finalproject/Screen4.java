@@ -10,5 +10,7 @@ public class Screen4 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen4);
+
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 }

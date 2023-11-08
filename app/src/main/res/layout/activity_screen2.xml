@@ -229,7 +229,6 @@
                 android:layout_width="47dp"
                 android:layout_height="47dp"
                 android:background="@drawable/btn_back"
-                android:onClick="backClick"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/logo_uit"
                 app:layout_constraintHorizontal_bias="0.1"

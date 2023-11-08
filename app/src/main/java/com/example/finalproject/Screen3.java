@@ -14,11 +14,7 @@ public class Screen3 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen3);
-    }
-    public void backClick(View view)
-    {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
     public void resetClick(View view)
     {

@@ -16,8 +16,8 @@
 
     <ImageView
         android:id="@+id/logo_uit"
-        android:layout_width="187dp"
-        android:layout_height="180dp"
+        android:layout_width="155dp"
+        android:layout_height="149dp"
         app:layout_constraintBottom_toTopOf="@+id/bgr_signin3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
     <ImageView
         android:id="@+id/bgr_signin3"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,6 @@
 
     <ImageView
         android:id="@+id/imageView6"
-        app:tint="#376db5"
         android:layout_width="292dp"
         android:layout_height="77dp"
         app:layout_constraintBottom_toBottomOf="parent"
