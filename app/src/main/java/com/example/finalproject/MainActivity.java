@@ -1,46 +1,50 @@
 package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+
+import com.example.finalproject.R;
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TabLayout tabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Button btn_signup = findViewById(R.id.btn_signup);
-        Button btn_signin = findViewById(R.id.btn_signin);
-
-        btn_signup.setOnClickListener(new View.OnClickListener() {
+        Switch btn_sw = findViewById(R.id.btn_switch);
+        btn_sw.setChecked(false);
+        FragmentManager fragMan = getSupportFragmentManager();
+        fragMan
+                .beginTransaction()
+                .replace(R.id.frame_layout, frag_signin.newInstance())
+                .commit();
+        btn_sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Screen2.class);
-                startActivity(intent);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+                    FragmentManager fragMan = getSupportFragmentManager();
+                    fragMan
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, frag_signup.newInstance())
+                            .commit();
+                }
+                else
+                {
+                    FragmentManager fragMan = getSupportFragmentManager();
+                    fragMan
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, frag_signin.newInstance())
+                            .commit();
+                }
             }
         });
-        btn_signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Screen3.class);
-                startActivity(intent);
-            }
-        });
-        Animation animaAlpha = AnimationUtils.loadAnimation(this,R.anim.anim_alpha);
 
-        ImageView logoUIT = findViewById(R.id.logo_uit);
-        logoUIT.startAnimation(animaAlpha);
-
-        TextView appName = findViewById(R.id.appName);
-        appName.startAnimation(animaAlpha);
     }
 }
