@@ -33,7 +33,6 @@ import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    MyWebSocketClient client = null;
     private MapView map = null;
     private LinearLayout layout;
     private TextView textView;
@@ -54,16 +53,6 @@ public class MainActivity extends AppCompatActivity{
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
         setContentView(R.layout.activity_main);
-        layout = findViewById(R.id.layout_text);
-        layout.setVisibility(View.GONE);
-        textView = findViewById(R.id.text);
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoREkwZ2hyVlJvaE5zVy1wSXpZeDBpT2lHMzNlWjJxV21sRk4wWGE1dWkwIn0.eyJleHAiOjE3MDIxODgzMDUsImlhdCI6MTcwMjExMzQ3NywiYXV0aF90aW1lIjoxNzAyMTAxOTA1LCJqdGkiOiI5Mzk4YTAzYS1kNDE0LTQ4Y2QtYWYwOS05OGNlOWJmZWZhNTgiLCJpc3MiOiJodHRwczovL3Vpb3QuaXh4Yy5kZXYvYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRlM2E0NDk2LTJmMTktNDgxMy1iZjAwLTA5NDA3ZDFlZThjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im9wZW5yZW1vdGUiLCJub25jZSI6ImY1ZDQ2NDYxLTNmNzEtNGJkMC1iNzQ4LTkzYTdkYTk3YzBkYiIsInNlc3Npb25fc3RhdGUiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdWlvdC5peHhjLmRldiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsib3BlbnJlbW90ZSI6eyJyb2xlcyI6WyJyZWFkOm1hcCIsInJlYWQ6cnVsZXMiLCJyZWFkOmluc2lnaHRzIiwicmVhZDphc3NldHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJGaXJzdCBOYW1lIExhc3QgbmFtZSIsInByZWZlcnJlZF91c2VybmFtZSI6InVzZXIiLCJnaXZlbl9uYW1lIjoiRmlyc3QgTmFtZSIsImZhbWlseV9uYW1lIjoiTGFzdCBuYW1lIiwiZW1haWwiOiJ1c2VyQGl4eGMuZGV2In0.KvHDuS_1JAp8Cvqekc8TJzairrkVOpId8HK6vMsjML1f5CvBsmHqchSGzRLCKPi_Mi_-W4bZxJZnwKU75M-Ql-hStSHcIP4wazYNwgsWg6EJs7hR3KllCNOusfELHepXL1HxVfSvkhTrp8NofYVbgRcm5eAgzhiHUsr5DhCchK3bIEi6FVQM6fvtvR3C3XhLL4z0dZsblAv5UZ1whLQxG3bQPD5_4egaD2Rn5UFrcsFtaGR1dLS-KsUCe2bAha7lmqr7AkUuts9vL9u5o3oLNkAUab-i771ykuFBPi5MeUXlHCkjzA9z3zlhdhgF1EbyEI0r-hx0g1VzOTAfo7RPpA";
-        try{
-            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+token);
-            client.connect();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
         map = findViewById(R.id.map);
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
                 -1.0f, 0.0f, 0.0f, 0.0f, 255f,
@@ -140,7 +129,6 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
                 return true;
             }
         });
@@ -203,40 +191,6 @@ public class MainActivity extends AppCompatActivity{
                     this,
                     permissionsToRequest.toArray(new String[0]),
                     REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
-
-    public class MyWebSocketClient extends WebSocketClient {
-
-        public MyWebSocketClient(String serverUrl) throws URISyntaxException {
-            super(new URI(serverUrl));
-        }
-
-        @Override
-        public void onOpen(ServerHandshake handshake) {
-            Log.d("WebSocket","On open");
-
-        }
-
-        @Override
-        public void onMessage(String message) {
-            // Handle incoming messages from the server.
-            Log.d("WebSocket","On message");
-            Log.d("WebSocket",message);
-        }
-
-        @Override
-        public void onClose(int code, String reason, boolean remote) {
-            // WebSocket connection is closed.
-            // Perform any necessary cleanup here.
-            Log.d("WebSocket","On close");
-        }
-
-        @Override
-        public void onError(Exception ex) {
-            // Handle any errors that occur during the WebSocket connection.
-            Log.d("WebSocket","On error");
         }
     }
 }
