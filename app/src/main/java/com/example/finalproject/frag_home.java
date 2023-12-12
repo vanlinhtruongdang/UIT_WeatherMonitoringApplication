@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ public class frag_home extends Fragment {
     private TextView timeTextView, dayOfWeekTextView, dateTextView;
 
     // Thời gian cập nhật lại sau mỗi 1 phút
-    private static final long UPDATE_INTERVAL = 60000; // 60 seconds
+    private static final long UPDATE_INTERVAL = 30000; // 30 seconds
 
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable updateTimeRunnable = new Runnable() {
@@ -55,6 +56,17 @@ public class frag_home extends Fragment {
         timeTextView = view.findViewById(R.id.tv_time);
         dayOfWeekTextView = view.findViewById(R.id.tv_dow);
         dateTextView = view.findViewById(R.id.tv_date);
+
+        FrameLayout frameLayout = view.findViewById(R.id.map);
+
+        // Tạo Fragment map
+        frag_minimap mapFragment = new frag_minimap();
+
+        // Thay thế Fragment hiện tại trong FrameLayout bằng Fragment map
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(frameLayout.getId(), mapFragment)
+                .commit();
         return view;
     }
     @Override

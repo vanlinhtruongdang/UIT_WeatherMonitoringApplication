@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".frag_minimap">
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="25dp"
+        >
+        <org.osmdroid.views.MapView
+            android:background="@drawable/map_des"
+            android:id="@+id/map"
+            android:layout_width="410dp"
+            android:layout_height="200dp">
+        </org.osmdroid.views.MapView>
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
