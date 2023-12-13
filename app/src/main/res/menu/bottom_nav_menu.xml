@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="User"
+        android:id="@+id/user"
+        android:icon="@drawable/logo_user" />
+    <item android:title=""
+        android:id="@+id/fab"
+        android:enabled="false"/>
+    <item android:title="Graph"
+        android:icon="@drawable/logo_graph"
+        android:id="@+id/graph" />
+</menu>

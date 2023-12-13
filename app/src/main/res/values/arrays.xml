@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="parameter_array">
+        <item>Humidity (%)</item>
+        <item>Temperature (°C)</item>
+        <item>Rainfall (mm)</item>
+        <item>Wind Speed (km/h)</item>
+    </array>
+</resources>
