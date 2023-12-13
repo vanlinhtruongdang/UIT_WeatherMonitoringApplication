@@ -129,6 +129,22 @@
                     android:layout_width="420dp"
                     android:layout_height="200dp"
                     android:background="@drawable/menu_des">
+<!--                    <LinearLayout-->
+<!--                        android:layout_margin="10dp"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="right">-->
+<!--                        <androidx.appcompat.widget.AppCompatButton-->
+<!--                            android:background="@drawable/btn_location1"-->
+<!--                            android:id="@+id/btn_location"-->
+<!--                            android:layout_width="50dp"-->
+<!--                            android:layout_height="50dp"/>-->
+<!--                        <androidx.appcompat.widget.AppCompatButton-->
+<!--                            android:id="@+id/btn_zoom"-->
+<!--                            android:background="@drawable/btn_zoom1"-->
+<!--                            android:layout_width="50dp"-->
+<!--                            android:layout_height="50dp"/>-->
+<!--                    </LinearLayout>-->
                 </FrameLayout>
             </RelativeLayout>
 

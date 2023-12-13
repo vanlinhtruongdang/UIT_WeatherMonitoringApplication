@@ -3,6 +3,8 @@ package com.example.finalproject;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,9 +21,11 @@ import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +44,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import android.widget.Toast;
+
+
 public class frag_minimap extends Fragment {
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
@@ -54,6 +61,8 @@ public class frag_minimap extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
+    Button btn_zoom;
+    Button btn_location;
     public static frag_minimap newInstance() {
         frag_minimap fragment = new frag_minimap();
         return fragment;
@@ -69,6 +78,18 @@ public class frag_minimap extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.frag_minimap, container, false);
+        btn_location = view.findViewById(R.id.btn_location);
+        btn_zoom = view.findViewById(R.id.btn_zoom);
+        btn_zoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_home, new frag_map())
+                        .addToBackStack(null)
+                        .commit();
+                Toast.makeText(requireActivity(), "Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoREkwZ2hyVlJvaE5zVy1wSXpZeDBpT2lHMzNlWjJxV21sRk4wWGE1dWkwIn0.eyJleHAiOjE3MDIxODgzMDUsImlhdCI6MTcwMjExMzQ3NywiYXV0aF90aW1lIjoxNzAyMTAxOTA1LCJqdGkiOiI5Mzk4YTAzYS1kNDE0LTQ4Y2QtYWYwOS05OGNlOWJmZWZhNTgiLCJpc3MiOiJodHRwczovL3Vpb3QuaXh4Yy5kZXYvYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRlM2E0NDk2LTJmMTktNDgxMy1iZjAwLTA5NDA3ZDFlZThjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im9wZW5yZW1vdGUiLCJub25jZSI6ImY1ZDQ2NDYxLTNmNzEtNGJkMC1iNzQ4LTkzYTdkYTk3YzBkYiIsInNlc3Npb25fc3RhdGUiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdWlvdC5peHhjLmRldiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsib3BlbnJlbW90ZSI6eyJyb2xlcyI6WyJyZWFkOm1hcCIsInJlYWQ6cnVsZXMiLCJyZWFkOmluc2lnaHRzIiwicmVhZDphc3NldHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJGaXJzdCBOYW1lIExhc3QgbmFtZSIsInByZWZlcnJlZF91c2VybmFtZSI6InVzZXIiLCJnaXZlbl9uYW1lIjoiRmlyc3QgTmFtZSIsImZhbWlseV9uYW1lIjoiTGFzdCBuYW1lIiwiZW1haWwiOiJ1c2VyQGl4eGMuZGV2In0.KvHDuS_1JAp8Cvqekc8TJzairrkVOpId8HK6vMsjML1f5CvBsmHqchSGzRLCKPi_Mi_-W4bZxJZnwKU75M-Ql-hStSHcIP4wazYNwgsWg6EJs7hR3KllCNOusfELHepXL1HxVfSvkhTrp8NofYVbgRcm5eAgzhiHUsr5DhCchK3bIEi6FVQM6fvtvR3C3XhLL4z0dZsblAv5UZ1whLQxG3bQPD5_4egaD2Rn5UFrcsFtaGR1dLS-KsUCe2bAha7lmqr7AkUuts9vL9u5o3oLNkAUab-i771ykuFBPi5MeUXlHCkjzA9z3zlhdhgF1EbyEI0r-hx0g1VzOTAfo7RPpA";
