@@ -84,6 +84,9 @@ public class frag_signin extends Fragment {
                             if(response.isSuccessful()){
                                 // notification successfull !!!
                                 Intent intent = new Intent(getActivity(), HomeActivity.class);
+                                intent.putExtra("accessToken", response.body().access_token);
+                                intent.putExtra("refreshToken",response.body().refresh_token);
+                                intent.putExtra("expireIn",response.body().expires_in);
                                 startActivity(intent);
                                 Log.d("SignIn",response.body().getAccess_token());
                             }

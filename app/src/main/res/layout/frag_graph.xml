@@ -5,20 +5,11 @@
     android:layout_height="wrap_content"
     tools:context=".frag_graph">
 
-    <Button
-        android:id="@+id/SignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:text="Sign In"/>
-
     <Spinner
         android:id="@+id/metricsSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/SignIn"
         android:layout_marginTop="20dp"/>
 
     <TextView

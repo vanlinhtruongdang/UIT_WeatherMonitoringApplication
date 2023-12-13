@@ -63,6 +63,9 @@ public class frag_home extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
+    String accessToken;
+    String refreshToken;
+    String expireIn;
     public frag_home() {
         // Required empty public constructor
     }
@@ -97,7 +100,9 @@ public class frag_home extends Fragment {
         timeTextView = view.findViewById(R.id.tv_time);
         dayOfWeekTextView = view.findViewById(R.id.tv_dow);
         dateTextView = view.findViewById(R.id.tv_date);
-
+        accessToken = getArguments().getString("accessToken");
+        refreshToken = getArguments().getString("refreshToken");
+        expireIn = getArguments().getString("expireIn");
         return view;
     }
 
@@ -106,12 +111,11 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoREkwZ2hyVlJvaE5zVy1wSXpZeDBpT2lHMzNlWjJxV21sRk4wWGE1dWkwIn0.eyJleHAiOjE3MDI1NDY3MDUsImlhdCI6MTcwMjQ3MzgyNywiYXV0aF90aW1lIjoxNzAyNDYwMzA1LCJqdGkiOiJhYzUzZGQ5NC05ZWQ3LTRjYjctOGY3OC1hYjdkN2I4YTQ5N2IiLCJpc3MiOiJodHRwczovL3Vpb3QuaXh4Yy5kZXYvYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRlM2E0NDk2LTJmMTktNDgxMy1iZjAwLTA5NDA3ZDFlZThjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im9wZW5yZW1vdGUiLCJub25jZSI6IjhkN2JmZWE1LWE0NzEtNGY1ZS04ODhmLWI4N2VhZjIyYTE3MSIsI…JpZmllZCI6ZmFsc2UsIm5hbWUiOiJVc2VyIFVpdDEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ1c2VyIiwiZ2l2ZW5fbmFtZSI6IlVzZXIiLCJmYW1pbHlfbmFtZSI6IlVpdDEiLCJlbWFpbCI6InVzZXJAaXh4Yy5kZXYifQ.l41mOABcfyGz3cZ3MWNr1VjpFx9SdXLU-xysB0k3zpZAMLj6yeG8x0t7hEAaPBU4JKfz4RqQmNSgSpNHuWfsF3D-N85uRMwZxJchzz_UfUQD7i_oZqvyWZYSmzZv0TWDOPeNVfUrQefaapfUyBZvmywtMe12sr_Zyi5IT3jQUDAV9wxef5XOPKRNSGcqaAtccD2NCuTV3osCj_oKeAyhOQ291u0oiwxdweao1PYlMORMGnaa0gAuzIPAjf7UQ6ybwQdVWU6pQYpFMDxzRUSy3k7dHsIHnK1bjauutUMSSKspbwQNyz0Fg2wgXXfoEwwSYdIt7QHXonVpAervfhMdTA";
         try{
-            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+token);
+            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
             client.connect();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            Log.d("WebSocket","Failed");
         }
         map = view.findViewById(R.id.map);
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
@@ -189,14 +193,13 @@ public class frag_home extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
                 try {
+                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
-
                 try {
                     String formatString = client.uglyJson.substring(16,client.uglyJson.length());
                     JSONObject jsonObject = new JSONObject(formatString);
@@ -232,8 +235,8 @@ public class frag_home extends Fragment {
         Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
                 try {
+                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);

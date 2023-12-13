@@ -174,6 +174,7 @@ public class frag_map extends Fragment {
         Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
+                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
                 return true;
             }
         });
@@ -205,8 +206,9 @@ public class frag_map extends Fragment {
     }
 
 
-    public class MyWebSocketClient extends WebSocketClient {
+    public static class MyWebSocketClient extends WebSocketClient {
 
+        public static String uglyJson = "REQUESTRESPONSE:{}";
         public MyWebSocketClient(String serverUrl) throws URISyntaxException {
             super(new URI(serverUrl));
         }
@@ -221,7 +223,8 @@ public class frag_map extends Fragment {
         public void onMessage(String message) {
             // Handle incoming messages from the server.
             Log.d("WebSocket","On message");
-            Log.d("WebSocket",message);
+            uglyJson = message;
+            Log.d("WebSocket",uglyJson);
         }
 
         @Override

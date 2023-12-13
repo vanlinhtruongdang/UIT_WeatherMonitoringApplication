@@ -73,9 +73,12 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
     private TextView startTimeTextView;
     private LineChart lineChart;
     private TextView endTimeTextView;
-    private Button generateChartButton, SignInButton;
+    private Button generateChartButton;
     private Calendar startDateTime;
     private Calendar endDateTime;
+    String accessToken;
+    String refreshToken;
+    String expireIn;
 
 
     public frag_graph() {
@@ -95,6 +98,9 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        accessToken = getArguments().getString("accessToken");
+        refreshToken = getArguments().getString("refreshToken");
+        expireIn = getArguments().getString("expireIn");
         return inflater.inflate(R.layout.frag_graph, container, false);
     }
 
@@ -119,7 +125,7 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
         startTimeTextView = view.findViewById(R.id.startTimeTextView);
         endTimeTextView = view.findViewById(R.id.endTimeTextView);
         generateChartButton = view.findViewById(R.id.generateChartButton);
-        SignInButton = view.findViewById(R.id.SignIn);
+//        SignInButton = view.findViewById(R.id.SignIn);
         lineChart = view.findViewById(R.id.lineChart);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -141,12 +147,12 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
             }
         });
 
-        SignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SignIn();
-            }
-        });
+//        SignInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SignIn();
+//            }
+//        });
 
         generateChartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,24 +208,24 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
         lineChart.invalidate();
     }
 
-    private void SignIn(){
-        ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
-        networkExecutor.execute(() -> {
-            Call<ResponseBody> StartSignIn = apiService.SignIn(
-                    "openremote",
-                    "user",
-                    "123",
-                    "password");
-            try {
-                Response<ResponseBody> Response = StartSignIn.execute();
-                JSONObject AccessTokenJSON = new JSONObject(Response.body().string());
-                AccessToken = AccessTokenJSON.getString("access_token");
-                System.out.println(AccessToken);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        });
-    }
+//    private void SignIn(){
+//        ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+//        networkExecutor.execute(() -> {
+//            Call<ResponseBody> StartSignIn = apiService.SignIn(
+//                    "openremote",
+//                    "user",
+//                    "123",
+//                    "password");
+//            try {
+//                Response<ResponseBody> Response = StartSignIn.execute();
+//                JSONObject AccessTokenJSON = new JSONObject(Response.body().string());
+//                AccessToken = AccessTokenJSON.getString("access_token");
+//                System.out.println(AccessToken);
+//            } catch (Exception e) {
+//                System.out.println(e);
+//            }
+//        });
+//    }
 
     private void showDateTimePickerDialog(boolean isStartTime) {
         DateTimePickerFragment dateTimePickerFragment = new DateTimePickerFragment(this, isStartTime);
@@ -245,7 +251,7 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
 
                     RequestBody requestBody = RequestBody.create(JSON, Mess.toString());
 
-                    Call<List<Point>> GetChart = apiService.GetChart("Bearer " + AccessToken,
+                    Call<List<Point>> GetChart = apiService.GetChart("Bearer " + accessToken,
                             selectedMetrics,
                             requestBody);
                     Response<List<Point>> ChartResponse = GetChart.execute();

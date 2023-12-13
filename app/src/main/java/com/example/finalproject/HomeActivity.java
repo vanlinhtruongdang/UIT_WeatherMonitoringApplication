@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +20,18 @@ public class HomeActivity extends AppCompatActivity {
     FloatingActionButton fab;
     FragmentManager fragmentManager;
     BottomNavigationView bottomNavigationView;
+    String accessToken;
+    String refreshToken;
+    String expireIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        Intent intent = getIntent();
+        accessToken = intent.getStringExtra("accessToken");
+        refreshToken = intent.getStringExtra("refreshToken");
+        expireIn = intent.getStringExtra("expireIn");
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setSelectedItemId(R.id.fab);
@@ -57,6 +64,11 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
     private void replaceFragment(Fragment fragment) {
+        Bundle bundle = new Bundle();
+        bundle.putString("accessToken", accessToken);
+        bundle.putString("refreshToken", refreshToken);
+        bundle.putString("expireIn", expireIn);
+        fragment.setArguments(bundle);
         FragmentTransaction Transaction = fragmentManager.beginTransaction();
         Transaction.replace(R.id.frame_layout, fragment);
         Transaction.commit();
