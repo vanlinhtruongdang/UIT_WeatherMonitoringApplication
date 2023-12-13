@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".frag_home">
@@ -50,7 +51,7 @@
                             android:fontFamily="@font/interblack"
                             android:text="20:00"
                             android:textColor="@color/white"
-                            android:textSize="50dp" />
+                            android:textSize="45dp" />
 
                         <TextView
                             android:id="@+id/tv_dow"
@@ -137,6 +138,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     </org.osmdroid.views.MapView>
+                    <Button
+                        android:id="@+id/btn_fullscreen"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/ic_fullscreen"
+                        />
 
                 </androidx.cardview.widget.CardView>
             </RelativeLayout>

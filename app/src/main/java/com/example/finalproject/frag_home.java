@@ -13,12 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,12 +68,13 @@ public class frag_home extends Fragment {
     String accessToken;
     String refreshToken;
     String expireIn;
+    Button btn_fullScreen;
     public frag_home() {
         // Required empty public constructor
     }
 
-    public static frag_user newInstance() {
-        frag_user fragment = new frag_user();
+    public static frag_home newInstance() {
+        frag_home fragment = new frag_home();
         return fragment;
     }
 
@@ -103,6 +106,20 @@ public class frag_home extends Fragment {
         accessToken = getArguments().getString("accessToken");
         refreshToken = getArguments().getString("refreshToken");
         expireIn = getArguments().getString("expireIn");
+        btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
+        btn_fullScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new frag_map();
+                Bundle bundle = new Bundle();
+                bundle.putString("accessToken", accessToken);
+                bundle.putString("refreshToken", refreshToken);
+                bundle.putString("expireIn", expireIn);
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.replace(R.id.map_container, fragment).commit();
+            }
+        });
         return view;
     }
 
@@ -111,6 +128,7 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
         try{
             client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
             client.connect();
@@ -179,8 +197,8 @@ public class frag_home extends Fragment {
                 map.setMinZoomLevel(MinZoom);
                 map.setMaxZoomLevel(MaxZoom);
                 map.getController().setZoom(ZoomLevel);
-                map.setScrollableAreaLimitLatitude(10.875, 10.865, 100);
-                map.setScrollableAreaLimitLongitude(106.800, 106.806, 100);
+                map.setScrollableAreaLimitLatitude(10.890, 10.865, 100);
+                map.setScrollableAreaLimitLongitude(106.7, 106.806, 100);
                 map.getController().setCenter(UITLocation);
                 map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
                 map.getOverlays().add(Station1Marker);
@@ -200,34 +218,39 @@ public class frag_home extends Fragment {
                     throw new RuntimeException(e);
                 }
                 Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
-                try {
+                try{
                     String formatString = client.uglyJson.substring(16,client.uglyJson.length());
-                    JSONObject jsonObject = new JSONObject(formatString);
-                    JSONObject event = jsonObject.getJSONObject("event");
-                    JSONArray assets = event.getJSONArray("assets");
-                    JSONObject zero = assets.getJSONObject(0);
-                    JSONObject attributes = zero.getJSONObject("attributes");
-                    JSONObject rainfall = attributes.getJSONObject("rainfall");
-                    JSONObject temperature = attributes.getJSONObject("temperature");
-                    JSONObject humidity = attributes.getJSONObject("humidity");
-                    JSONObject windDirection = attributes.getJSONObject("windDirection");
-                    JSONObject windSpeed = attributes.getJSONObject("windSpeed");
+                    if (!formatString.equals("{}")) {
+                        JSONObject jsonObject = new JSONObject(formatString);
+                        String messageId = jsonObject.getString("messageId");
+                        if(messageId.equals("read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2")){
+                            JSONObject event = jsonObject.getJSONObject("event");
+                            JSONArray assets = event.getJSONArray("assets");
+                            JSONObject zero = assets.getJSONObject(0);
+                            JSONObject attributes = zero.getJSONObject("attributes");
+                            JSONObject rainfall = attributes.getJSONObject("rainfall");
+                            JSONObject temperature = attributes.getJSONObject("temperature");
+                            JSONObject humidity = attributes.getJSONObject("humidity");
+                            JSONObject windDirection = attributes.getJSONObject("windDirection");
+                            JSONObject windSpeed = attributes.getJSONObject("windSpeed");
 
-                    TextView rf = view.findViewById(R.id.tv_rainfall);
-                    TextView temp = view.findViewById(R.id.tv_temp);
-                    TextView hm = view.findViewById(R.id.tv_humidity);
-                    TextView wd = view.findViewById(R.id.tv_winddirect);
-                    TextView ws = view.findViewById(R.id.tv_windspeed);
+                            TextView rf = view.findViewById(R.id.tv_rainfall);
+                            TextView temp = view.findViewById(R.id.tv_temp);
+                            TextView hm = view.findViewById(R.id.tv_humidity);
+                            TextView wd = view.findViewById(R.id.tv_winddirect);
+                            TextView ws = view.findViewById(R.id.tv_windspeed);
 
-                    rf.setText(rainfall.getString("value").concat("mm"));
-                    temp.setText(temperature.getString("value").concat("°C"));
-                    hm.setText(humidity.getString("value").concat("%"));
-                    wd.setText(windDirection.getString("value"));
-                    ws.setText(windSpeed.getString("value").concat(" km/h"));
-
+                            rf.setText(rainfall.getString("value").concat("mm"));
+                            temp.setText(temperature.getString("value").concat("°C"));
+                            hm.setText(humidity.getString("value").concat("%"));
+                            wd.setText(windDirection.getString("value"));
+                            ws.setText(windSpeed.getString("value").concat(" km/h"));
+                        }
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
+
                 return true;
             }
         });
@@ -244,22 +267,29 @@ public class frag_home extends Fragment {
                 Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
                 try{
                     String formatString = client.uglyJson.substring(16,client.uglyJson.length());
-                    JSONObject jsonObject = new JSONObject(formatString);
-                    JSONObject event = jsonObject.getJSONObject("event");
-                    JSONArray assets = event.getJSONArray("assets");
-                    JSONObject zero = assets.getJSONObject(0);
-                    JSONObject attributes = zero.getJSONObject("attributes");
-                    JSONObject brightness = attributes.getJSONObject("brightness");
-                    JSONObject colourTemperature = attributes.getJSONObject("colourTemperature");
+                    if (!formatString.equals("{}")) {
+                        JSONObject jsonObject = new JSONObject(formatString);
+                        String messageId = jsonObject.getString("messageId");
+                        if(messageId.equals("read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2")){
+                            JSONObject event = jsonObject.getJSONObject("event");
+                            JSONArray assets = event.getJSONArray("assets");
+                            JSONObject zero = assets.getJSONObject(0);
+                            JSONObject attributes = zero.getJSONObject("attributes");
+                            JSONObject brightness = attributes.getJSONObject("brightness");
+                            JSONObject colourTemperature = attributes.getJSONObject("colourTemperature");
 
-                    TextView br = view.findViewById(R.id.tv_brightness);
-                    TextView ct = view.findViewById(R.id.tv_colortemp);
+                            TextView br = view.findViewById(R.id.tv_brightness);
+                            TextView ct = view.findViewById(R.id.tv_colortemp);
 
-                    br.setText(brightness.getString("value").concat("%"));
-                    ct.setText(colourTemperature.getString("value").concat("°K"));
+                            br.setText(brightness.getString("value").concat("%"));
+                            ct.setText(colourTemperature.getString("value").concat("°K"));
+                        }
+                    }
+                    // notification
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
+
                 return true;
             }
         });

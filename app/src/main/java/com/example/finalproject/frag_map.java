@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,9 +21,12 @@ import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,8 +50,6 @@ public class frag_map extends Fragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     MyWebSocketClient client = null;
     private MapView map = null;
-    private LinearLayout layout;
-    private TextView textView;
     private long ZoomSpeed = 500;
     private double MinZoom = 18.0;
     private double MaxZoom = 21.0;
@@ -55,6 +57,10 @@ public class frag_map extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
+    String accessToken;
+    String refreshToken;
+    String expireIn;
+
     public static frag_map newInstance() {
         frag_map fragment = new frag_map();
         return fragment;
@@ -70,11 +76,9 @@ public class frag_map extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.frag_map, container, false);
-
-        layout = view.findViewById(R.id.layout_text);
-        layout.setVisibility(View.GONE);
-        textView = view.findViewById(R.id.text);
-
+        accessToken = getArguments().getString("accessToken");
+        refreshToken = getArguments().getString("refreshToken");
+        expireIn = getArguments().getString("expireIn");
         return view;
     }
 
@@ -83,9 +87,8 @@ public class frag_map extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoREkwZ2hyVlJvaE5zVy1wSXpZeDBpT2lHMzNlWjJxV21sRk4wWGE1dWkwIn0.eyJleHAiOjE3MDIxODgzMDUsImlhdCI6MTcwMjExMzQ3NywiYXV0aF90aW1lIjoxNzAyMTAxOTA1LCJqdGkiOiI5Mzk4YTAzYS1kNDE0LTQ4Y2QtYWYwOS05OGNlOWJmZWZhNTgiLCJpc3MiOiJodHRwczovL3Vpb3QuaXh4Yy5kZXYvYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRlM2E0NDk2LTJmMTktNDgxMy1iZjAwLTA5NDA3ZDFlZThjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im9wZW5yZW1vdGUiLCJub25jZSI6ImY1ZDQ2NDYxLTNmNzEtNGJkMC1iNzQ4LTkzYTdkYTk3YzBkYiIsInNlc3Npb25fc3RhdGUiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdWlvdC5peHhjLmRldiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsib3BlbnJlbW90ZSI6eyJyb2xlcyI6WyJyZWFkOm1hcCIsInJlYWQ6cnVsZXMiLCJyZWFkOmluc2lnaHRzIiwicmVhZDphc3NldHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJGaXJzdCBOYW1lIExhc3QgbmFtZSIsInByZWZlcnJlZF91c2VybmFtZSI6InVzZXIiLCJnaXZlbl9uYW1lIjoiRmlyc3QgTmFtZSIsImZhbWlseV9uYW1lIjoiTGFzdCBuYW1lIiwiZW1haWwiOiJ1c2VyQGl4eGMuZGV2In0.KvHDuS_1JAp8Cvqekc8TJzairrkVOpId8HK6vMsjML1f5CvBsmHqchSGzRLCKPi_Mi_-W4bZxJZnwKU75M-Ql-hStSHcIP4wazYNwgsWg6EJs7hR3KllCNOusfELHepXL1HxVfSvkhTrp8NofYVbgRcm5eAgzhiHUsr5DhCchK3bIEi6FVQM6fvtvR3C3XhLL4z0dZsblAv5UZ1whLQxG3bQPD5_4egaD2Rn5UFrcsFtaGR1dLS-KsUCe2bAha7lmqr7AkUuts9vL9u5o3oLNkAUab-i771ykuFBPi5MeUXlHCkjzA9z3zlhdhgF1EbyEI0r-hx0g1VzOTAfo7RPpA";
         try{
-            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+token);
+            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
             client.connect();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -152,8 +155,8 @@ public class frag_map extends Fragment {
                 map.setMinZoomLevel(MinZoom);
                 map.setMaxZoomLevel(MaxZoom);
                 map.getController().setZoom(ZoomLevel);
-                map.setScrollableAreaLimitLatitude(10.875, 10.865, 100);
-                map.setScrollableAreaLimitLongitude(106.800, 106.806, 100);
+                map.setScrollableAreaLimitLatitude(10.95, 10.865, 100);
+                map.setScrollableAreaLimitLongitude(106.2, 106.806, 100);
                 map.getController().setCenter(UITLocation);
                 map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
                 map.getOverlays().add(Station1Marker);
@@ -166,7 +169,14 @@ public class frag_map extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+                try {
+                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
+
                 return true;
             }
         });
@@ -174,7 +184,14 @@ public class frag_map extends Fragment {
         Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+                try {
+                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
+
                 return true;
             }
         });
