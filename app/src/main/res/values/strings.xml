@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">FinalAndroidPrj</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="choose_parameter">Choose Parameter</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

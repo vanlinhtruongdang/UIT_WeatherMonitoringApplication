@@ -2,8 +2,12 @@ package com.example.finalproject;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.finalproject.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class frag_home extends Fragment {
@@ -61,14 +66,28 @@ public class frag_home extends Fragment {
 
         // Tạo Fragment map
         frag_minimap mapFragment = new frag_minimap();
+        ((BottomNavigationView)requireActivity().findViewById(R.id.bottomNavigationView)).setSelectedItemId(R.id.fab);
+
 
         // Thay thế Fragment hiện tại trong FrameLayout bằng Fragment map
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(frameLayout.getId(), mapFragment)
                 .commit();
+
+        //backPressed
+        OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+            }
+        };
+        onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
         return view;
     }
+
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -82,6 +101,8 @@ public class frag_home extends Fragment {
         // Dừng cập nhật thời gian khi Fragment không còn được hiển thị
         handler.removeCallbacks(updateTimeRunnable);
     }
+
+
     private void displayDateTimeInfo(TextView timeTextView, TextView dayOfWeekTextView, TextView dateTextView) {
         Calendar calendar = Calendar.getInstance(); // Tạo một instance của Calendar
 

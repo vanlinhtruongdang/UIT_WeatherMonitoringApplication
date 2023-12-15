@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -19,14 +21,18 @@ import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -45,8 +51,6 @@ public class frag_map extends Fragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     MyWebSocketClient client = null;
     private MapView map = null;
-    private LinearLayout layout;
-    private TextView textView;
     private long ZoomSpeed = 500;
     private double MinZoom = 18.0;
     private double MaxZoom = 21.0;
@@ -71,9 +75,19 @@ public class frag_map extends Fragment {
         View view  = inflater.inflate(R.layout.frag_map, container, false);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        layout = view.findViewById(R.id.layout_text);
-        layout.setVisibility(View.GONE);
-        textView = view.findViewById(R.id.text);
+
+        FrameLayout frameLayout = view.findViewById(R.id.map_dashboard);
+
+        // Tạo Fragment map
+        frag_map_dashboard map_dashboard = new frag_map_dashboard();
+
+
+        // Thay thế Fragment hiện tại trong FrameLayout bằng Fragment map
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(frameLayout.getId(), map_dashboard)
+                .commit();
+
         String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoREkwZ2hyVlJvaE5zVy1wSXpZeDBpT2lHMzNlWjJxV21sRk4wWGE1dWkwIn0.eyJleHAiOjE3MDIxODgzMDUsImlhdCI6MTcwMjExMzQ3NywiYXV0aF90aW1lIjoxNzAyMTAxOTA1LCJqdGkiOiI5Mzk4YTAzYS1kNDE0LTQ4Y2QtYWYwOS05OGNlOWJmZWZhNTgiLCJpc3MiOiJodHRwczovL3Vpb3QuaXh4Yy5kZXYvYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRlM2E0NDk2LTJmMTktNDgxMy1iZjAwLTA5NDA3ZDFlZThjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im9wZW5yZW1vdGUiLCJub25jZSI6ImY1ZDQ2NDYxLTNmNzEtNGJkMC1iNzQ4LTkzYTdkYTk3YzBkYiIsInNlc3Npb25fc3RhdGUiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdWlvdC5peHhjLmRldiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsib3BlbnJlbW90ZSI6eyJyb2xlcyI6WyJyZWFkOm1hcCIsInJlYWQ6cnVsZXMiLCJyZWFkOmluc2lnaHRzIiwicmVhZDphc3NldHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJiZDM4MzZjMy04YjZjLTQ0YTctOWQ2Yy00OWU3NTk4NTVjYzciLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJGaXJzdCBOYW1lIExhc3QgbmFtZSIsInByZWZlcnJlZF91c2VybmFtZSI6InVzZXIiLCJnaXZlbl9uYW1lIjoiRmlyc3QgTmFtZSIsImZhbWlseV9uYW1lIjoiTGFzdCBuYW1lIiwiZW1haWwiOiJ1c2VyQGl4eGMuZGV2In0.KvHDuS_1JAp8Cvqekc8TJzairrkVOpId8HK6vMsjML1f5CvBsmHqchSGzRLCKPi_Mi_-W4bZxJZnwKU75M-Ql-hStSHcIP4wazYNwgsWg6EJs7hR3KllCNOusfELHepXL1HxVfSvkhTrp8NofYVbgRcm5eAgzhiHUsr5DhCchK3bIEi6FVQM6fvtvR3C3XhLL4z0dZsblAv5UZ1whLQxG3bQPD5_4egaD2Rn5UFrcsFtaGR1dLS-KsUCe2bAha7lmqr7AkUuts9vL9u5o3oLNkAUab-i771ykuFBPi5MeUXlHCkjzA9z3zlhdhgF1EbyEI0r-hx0g1VzOTAfo7RPpA";
         try{
             client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+token);
@@ -173,10 +187,21 @@ public class frag_map extends Fragment {
                 Manifest.permission.ACCESS_FINE_LOCATION};
 
         requestPermissionsIfNecessary(Permission);
+
         return view;
     }
     public void onResume() {
         super.onResume();
+
+        //Backpressed
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().beginTransaction().remove(frag_map.this).commit();
+            }
+        });
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         Configuration.getInstance().load(requireContext(), prefs);
         if (map != null) {

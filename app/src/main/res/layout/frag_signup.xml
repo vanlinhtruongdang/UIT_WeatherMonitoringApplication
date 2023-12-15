@@ -60,7 +60,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:hint="User name"
+            android:hint="Username"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white">
 

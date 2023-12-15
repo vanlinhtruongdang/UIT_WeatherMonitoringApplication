@@ -87,7 +87,6 @@ public class frag_minimap extends Fragment {
                         .replace(R.id.frame_home, new frag_map())
                         .addToBackStack(null)
                         .commit();
-                Toast.makeText(requireActivity(), "Button Clicked", Toast.LENGTH_SHORT).show();
             }
         });
         Context ctx = requireContext();
