@@ -37,6 +37,8 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.finalproject.R;
+import com.example.finalproject.Utils.MyWebSocketClient;
+import com.tencent.mmkv.MMKV;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -56,6 +58,7 @@ public class frag_home extends Fragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     MyWebSocketClient client = null;
     private MapView map = null;
+    private MMKV kv = null;
     private LinearLayout layout;
     private TextView textView;
     private long ZoomSpeed = 500;
@@ -66,8 +69,6 @@ public class frag_home extends Fragment {
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
     String accessToken;
-    String refreshToken;
-    String expireIn;
     Button btn_fullScreen;
     public frag_home() {
         // Required empty public constructor
@@ -103,21 +104,14 @@ public class frag_home extends Fragment {
         timeTextView = view.findViewById(R.id.tv_time);
         dayOfWeekTextView = view.findViewById(R.id.tv_dow);
         dateTextView = view.findViewById(R.id.tv_date);
-        accessToken = getArguments().getString("accessToken");
-        refreshToken = getArguments().getString("refreshToken");
-        expireIn = getArguments().getString("expireIn");
         btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
         btn_fullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new frag_map();
-                Bundle bundle = new Bundle();
-                bundle.putString("accessToken", accessToken);
-                bundle.putString("refreshToken", refreshToken);
-                bundle.putString("expireIn", expireIn);
-                fragment.setArguments(bundle);
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.replace(R.id.map_container, fragment).commit();
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.map_container, new frag_map())
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         return view;
@@ -128,7 +122,9 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
+        MMKV.initialize(this.getContext());
+        kv = MMKV.defaultMMKV();
+        accessToken = kv.decodeString("AccessToken");
         try{
             client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
             client.connect();
@@ -136,6 +132,61 @@ public class frag_home extends Fragment {
             Log.d("WebSocket","Failed");
         }
         map = view.findViewById(R.id.map);
+        SetupMap(view,ctx);
+        String[] Permission = {
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION};
+        requestPermissionsIfNecessary(Permission);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Bắt đầu cập nhật thời gian khi Fragment được hiển thị
+        handler.post(updateTimeRunnable);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Dừng cập nhật thời gian khi Fragment không còn được hiển thị
+        handler.removeCallbacks(updateTimeRunnable);
+    }
+    private void displayDateTimeInfo(TextView timeTextView, TextView dayOfWeekTextView, TextView dateTextView) {
+        Calendar calendar = Calendar.getInstance(); // Tạo một instance của Calendar
+
+        // Định dạng thời gian và hiển thị trong TextView thời gian
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String formattedTime = timeFormat.format(calendar.getTime());
+        timeTextView.setText(formattedTime);
+
+        // Định dạng thứ và hiển thị trong TextView thứ
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
+        String formattedDayOfWeek = dayFormat.format(calendar.getTime());
+        dayOfWeekTextView.setText(formattedDayOfWeek);
+
+        // Định dạng ngày tháng năm và hiển thị trong TextView ngày tháng năm
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String formattedDate = dateFormat.format(calendar.getTime());
+        dateTextView.setText(formattedDate);
+    }
+
+
+    private void requestPermissionsIfNecessary(String[] permissions) {
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission);
+            }
+        }
+        if (permissionsToRequest.size() > 0) {
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissionsToRequest.toArray(new String[0]),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+    private void SetupMap(@NonNull View view, @NonNull Context ctx){
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
                 -1.0f, 0.0f, 0.0f, 0.0f, 255f,
                 0.0f, -1.0f, 0.0f, 0.0f, 255f,
@@ -211,46 +262,7 @@ public class frag_home extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                try {
-                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
-                try{
-                    String formatString = client.uglyJson.substring(16,client.uglyJson.length());
-                    if (!formatString.equals("{}")) {
-                        JSONObject jsonObject = new JSONObject(formatString);
-                        String messageId = jsonObject.getString("messageId");
-                        if(messageId.equals("read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2")){
-                            JSONObject event = jsonObject.getJSONObject("event");
-                            JSONArray assets = event.getJSONArray("assets");
-                            JSONObject zero = assets.getJSONObject(0);
-                            JSONObject attributes = zero.getJSONObject("attributes");
-                            JSONObject rainfall = attributes.getJSONObject("rainfall");
-                            JSONObject temperature = attributes.getJSONObject("temperature");
-                            JSONObject humidity = attributes.getJSONObject("humidity");
-                            JSONObject windDirection = attributes.getJSONObject("windDirection");
-                            JSONObject windSpeed = attributes.getJSONObject("windSpeed");
-
-                            TextView rf = view.findViewById(R.id.tv_rainfall);
-                            TextView temp = view.findViewById(R.id.tv_temp);
-                            TextView hm = view.findViewById(R.id.tv_humidity);
-                            TextView wd = view.findViewById(R.id.tv_winddirect);
-                            TextView ws = view.findViewById(R.id.tv_windspeed);
-
-                            rf.setText(rainfall.getString("value").concat("mm"));
-                            temp.setText(temperature.getString("value").concat("°C"));
-                            hm.setText(humidity.getString("value").concat("%"));
-                            wd.setText(windDirection.getString("value"));
-                            ws.setText(windSpeed.getString("value").concat(" km/h"));
-                        }
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-
+                UpdateMark1(view);
                 return true;
             }
         });
@@ -258,125 +270,83 @@ public class frag_home extends Fragment {
         Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                try {
-                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
-                try{
-                    String formatString = client.uglyJson.substring(16,client.uglyJson.length());
-                    if (!formatString.equals("{}")) {
-                        JSONObject jsonObject = new JSONObject(formatString);
-                        String messageId = jsonObject.getString("messageId");
-                        if(messageId.equals("read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2")){
-                            JSONObject event = jsonObject.getJSONObject("event");
-                            JSONArray assets = event.getJSONArray("assets");
-                            JSONObject zero = assets.getJSONObject(0);
-                            JSONObject attributes = zero.getJSONObject("attributes");
-                            JSONObject brightness = attributes.getJSONObject("brightness");
-                            JSONObject colourTemperature = attributes.getJSONObject("colourTemperature");
-
-                            TextView br = view.findViewById(R.id.tv_brightness);
-                            TextView ct = view.findViewById(R.id.tv_colortemp);
-
-                            br.setText(brightness.getString("value").concat("%"));
-                            ct.setText(colourTemperature.getString("value").concat("°K"));
-                        }
-                    }
-                    // notification
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-
+                UpdateMark2(view);
                 return true;
             }
         });
-
-        String[] Permission = {
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION};
-        requestPermissionsIfNecessary(Permission);
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Bắt đầu cập nhật thời gian khi Fragment được hiển thị
-        handler.post(updateTimeRunnable);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Dừng cập nhật thời gian khi Fragment không còn được hiển thị
-        handler.removeCallbacks(updateTimeRunnable);
-    }
-    private void displayDateTimeInfo(TextView timeTextView, TextView dayOfWeekTextView, TextView dateTextView) {
-        Calendar calendar = Calendar.getInstance(); // Tạo một instance của Calendar
-
-        // Định dạng thời gian và hiển thị trong TextView thời gian
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        String formattedTime = timeFormat.format(calendar.getTime());
-        timeTextView.setText(formattedTime);
-
-        // Định dạng thứ và hiển thị trong TextView thứ
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-        String formattedDayOfWeek = dayFormat.format(calendar.getTime());
-        dayOfWeekTextView.setText(formattedDayOfWeek);
-
-        // Định dạng ngày tháng năm và hiển thị trong TextView ngày tháng năm
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String formattedDate = dateFormat.format(calendar.getTime());
-        dateTextView.setText(formattedDate);
-    }
-    public static class  MyWebSocketClient extends WebSocketClient {
-
-        public static String uglyJson = "REQUESTRESPONSE:{}";
-        public MyWebSocketClient(String serverUrl) throws URISyntaxException {
-            super(new URI(serverUrl));
+    private void UpdateMark1(@NonNull View view){
+        try {
+            client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
+        try{
+            String formatString = client.uglyJson.substring(16,client.uglyJson.length());
+            if (!formatString.equals("{}")) {
+                JSONObject jsonObject = new JSONObject(formatString);
+                String messageId = jsonObject.getString("messageId");
+                if(messageId.equals("read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2")){
+                    JSONObject event = jsonObject.getJSONObject("event");
+                    JSONArray assets = event.getJSONArray("assets");
+                    JSONObject zero = assets.getJSONObject(0);
+                    JSONObject attributes = zero.getJSONObject("attributes");
+                    JSONObject rainfall = attributes.getJSONObject("rainfall");
+                    JSONObject temperature = attributes.getJSONObject("temperature");
+                    JSONObject humidity = attributes.getJSONObject("humidity");
+                    JSONObject windDirection = attributes.getJSONObject("windDirection");
+                    JSONObject windSpeed = attributes.getJSONObject("windSpeed");
 
-        @Override
-        public void onOpen(ServerHandshake handshake) {
-            Log.d("WebSocket","On open");
+                    TextView rf = view.findViewById(R.id.tv_rainfall);
+                    TextView temp = view.findViewById(R.id.tv_temp);
+                    TextView hm = view.findViewById(R.id.tv_humidity);
+                    TextView wd = view.findViewById(R.id.tv_winddirect);
+                    TextView ws = view.findViewById(R.id.tv_windspeed);
 
-        }
-        @Override
-        public void onMessage(String message) {
-            // Handle incoming messages from the server.
-            Log.d("WebSocket","On message");
-            this.uglyJson = message;
-            Log.d("WebSocket",uglyJson);
-        }
-
-        @Override
-        public void onClose(int code, String reason, boolean remote) {
-            // WebSocket connection is closed.
-            // Perform any necessary cleanup here.
-            Log.d("WebSocket","On close");
-        }
-
-        @Override
-        public void onError(Exception ex) {
-            // Handle any errors that occur during the WebSocket connection.
-            Log.d("WebSocket","On error");
-        }
-    }
-
-    private void requestPermissionsIfNecessary(String[] permissions) {
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(permission);
+                    rf.setText(rainfall.getString("value").concat("mm"));
+                    temp.setText(temperature.getString("value").concat("°C"));
+                    hm.setText(humidity.getString("value").concat("%"));
+                    wd.setText(windDirection.getString("value"));
+                    ws.setText(windSpeed.getString("value").concat(" km/h"));
+                }
             }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
-        if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+    private void UpdateMark2(@NonNull View view){
+        try {
+            client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
+        try{
+            String formatString = client.uglyJson.substring(16,client.uglyJson.length());
+            if (!formatString.equals("{}")) {
+                JSONObject jsonObject = new JSONObject(formatString);
+                String messageId = jsonObject.getString("messageId");
+                if(messageId.equals("read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2")){
+                    JSONObject event = jsonObject.getJSONObject("event");
+                    JSONArray assets = event.getJSONArray("assets");
+                    JSONObject zero = assets.getJSONObject(0);
+                    JSONObject attributes = zero.getJSONObject("attributes");
+                    JSONObject brightness = attributes.getJSONObject("brightness");
+                    JSONObject colourTemperature = attributes.getJSONObject("colourTemperature");
+
+                    TextView br = view.findViewById(R.id.tv_brightness);
+                    TextView ct = view.findViewById(R.id.tv_colortemp);
+
+                    br.setText(brightness.getString("value").concat("%"));
+                    ct.setText(colourTemperature.getString("value").concat("°K"));
+                }
+            }
+            // notification
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.finalproject.Utils;
 
 import com.example.finalproject.Model.Point;
 import com.example.finalproject.Model.Token;
+import com.example.finalproject.Model.User;
 
 import java.util.List;
 
@@ -53,10 +54,7 @@ public interface ApiService {
                                @Path("attributeName") String attributeName,
                                @Body RequestBody Message);
 
-    @FormUrlEncoded
-    @POST("/auth/realms/master/protocol/openid-connect/token")
-    Call<ResponseBody> SignIn(@Field("client_id") String client_id,
-                              @Field("username") String username,
-                              @Field("password") String password,
-                              @Field("grant_type") String grant_type);
+    @Headers({"accept: application/json"})
+    @GET("/api/master/user/user")
+    Call<User> getUser(@Header("Authorization") String token);
 }

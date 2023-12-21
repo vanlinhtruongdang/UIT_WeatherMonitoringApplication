@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +33,9 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.example.finalproject.Utils.MyWebSocketClient;
+import com.tencent.mmkv.MMKV;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -49,6 +53,7 @@ public class frag_map extends Fragment {
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     MyWebSocketClient client = null;
+    private MMKV kv = null;
     private MapView map = null;
     private long ZoomSpeed = 500;
     private double MinZoom = 18.0;
@@ -75,10 +80,11 @@ public class frag_map extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view  = inflater.inflate(R.layout.frag_map, container, false);
-        accessToken = getArguments().getString("accessToken");
-        refreshToken = getArguments().getString("refreshToken");
-        expireIn = getArguments().getString("expireIn");
+        MMKV.initialize(this.getContext());
+        kv = MMKV.defaultMMKV();
+        accessToken = kv.decodeString("AccessToken");
         return view;
     }
 
@@ -205,6 +211,15 @@ public class frag_map extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        //Backpressed
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().beginTransaction().remove(frag_map.this).commit();
+            }
+        });
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         Configuration.getInstance().load(requireContext(), prefs);
         if (map != null) {
@@ -219,42 +234,6 @@ public class frag_map extends Fragment {
         Configuration.getInstance().save(requireContext(), prefs);
         if (map != null) {
             map.onPause();
-        }
-    }
-
-
-    public static class MyWebSocketClient extends WebSocketClient {
-
-        public static String uglyJson = "REQUESTRESPONSE:{}";
-        public MyWebSocketClient(String serverUrl) throws URISyntaxException {
-            super(new URI(serverUrl));
-        }
-
-        @Override
-        public void onOpen(ServerHandshake handshake) {
-            Log.d("WebSocket","On open");
-
-        }
-
-        @Override
-        public void onMessage(String message) {
-            // Handle incoming messages from the server.
-            Log.d("WebSocket","On message");
-            uglyJson = message;
-            Log.d("WebSocket",uglyJson);
-        }
-
-        @Override
-        public void onClose(int code, String reason, boolean remote) {
-            // WebSocket connection is closed.
-            // Perform any necessary cleanup here.
-            Log.d("WebSocket","On close");
-        }
-
-        @Override
-        public void onError(Exception ex) {
-            // Handle any errors that occur during the WebSocket connection.
-            Log.d("WebSocket","On error");
         }
     }
 

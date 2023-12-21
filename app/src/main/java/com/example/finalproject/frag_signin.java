@@ -29,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.tencent.mmkv.MMKV;
 
 
 public class frag_signin extends Fragment {
@@ -36,6 +37,7 @@ public class frag_signin extends Fragment {
     private TextInputEditText username;
     private TextInputEditText password;
     private Button btn_signIn;
+    private MMKV kv;
     public frag_signin() {
     }
 
@@ -47,6 +49,8 @@ public class frag_signin extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MMKV.initialize(this.getContext());
+        kv = MMKV.defaultMMKV();
     }
 
     @Override
@@ -83,10 +87,9 @@ public class frag_signin extends Fragment {
                             Response<Token> response = call.execute();
                             if(response.isSuccessful()){
                                 // notification successfull !!!
+                                String AccessToken = response.body().getAccess_token();
+                                kv.encode("AccessToken", AccessToken);
                                 Intent intent = new Intent(getActivity(), HomeActivity.class);
-                                intent.putExtra("accessToken", response.body().access_token);
-                                intent.putExtra("refreshToken",response.body().refresh_token);
-                                intent.putExtra("expireIn",response.body().expires_in);
                                 startActivity(intent);
                                 Log.d("SignIn",response.body().getAccess_token());
                             }

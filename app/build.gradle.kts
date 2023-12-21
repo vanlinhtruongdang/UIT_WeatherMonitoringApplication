@@ -54,6 +54,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.java-websocket:Java-WebSocket:1.5.1")
     implementation("org.osmdroid:osmdroid-android:6.1.17")
+    implementation("com.tencent:mmkv:1.3.2")
     implementation("org.json:json:20231013")
+
 
 }

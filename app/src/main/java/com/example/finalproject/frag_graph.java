@@ -60,14 +60,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 import com.example.finalproject.R;
+import com.tencent.mmkv.MMKV;
 
 
 public class frag_graph extends Fragment implements DateTimePickerFragment.OnDateTimeSetListener{
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
+    private MMKV kv = null;
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
-    private String AccessToken;
     private ApiService apiService;
     private Spinner metricsSpinner;
     private TextView startTimeTextView;
@@ -77,8 +77,6 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
     private Calendar startDateTime;
     private Calendar endDateTime;
     String accessToken;
-    String refreshToken;
-    String expireIn;
 
 
     public frag_graph() {
@@ -98,9 +96,7 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        accessToken = getArguments().getString("accessToken");
-        refreshToken = getArguments().getString("refreshToken");
-        expireIn = getArguments().getString("expireIn");
+
         return inflater.inflate(R.layout.frag_graph, container, false);
     }
 
@@ -109,6 +105,9 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        MMKV.initialize(this.getContext());
+        kv = MMKV.defaultMMKV();
+        accessToken = kv.decodeString("AccessToken");
         okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(new CustomCookieJar())
                 .build();
