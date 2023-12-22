@@ -37,6 +37,8 @@ import androidx.core.content.ContextCompat;
 import com.example.finalproject.Utils.MyWebSocketClient;
 import com.tencent.mmkv.MMKV;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -62,9 +64,9 @@ public class frag_map extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
+    private Button btn_center;
     String accessToken;
-    String refreshToken;
-    String expireIn;
+
 
     public static frag_map newInstance() {
         frag_map fragment = new frag_map();
@@ -93,6 +95,7 @@ public class frag_map extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        btn_center = view.findViewById(R.id.btn_center);
         try{
             client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
             client.connect();
@@ -100,6 +103,75 @@ public class frag_map extends Fragment {
             throw new RuntimeException(e);
         }
         map = view.findViewById(R.id.map);
+        SetupMap(view,ctx);
+        btn_center.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.getController().animateTo(UITLocation, ZoomLevel, ZoomSpeed);
+            }
+        });
+
+    String[] Permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION};
+
+    requestPermissionsIfNecessary(Permission);
+}
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Backpressed
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().beginTransaction().remove(frag_map.this).commit();
+            }
+        });
+
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        Configuration.getInstance().load(requireContext(), prefs);
+        if (map != null) {
+            map.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        Configuration.getInstance().save(requireContext(), prefs);
+        if (map != null) {
+            map.onPause();
+        }
+    }
+
+    private void requestPermissionsIfNecessary(String[] permissions) {
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission);
+            }
+        }
+        if (permissionsToRequest.size() > 0) {
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissionsToRequest.toArray(new String[0]),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+    //Hiển thị và thêm hiệu ứng
+    private void replaceFragment(Fragment fragment, String message) {
+        Bundle bundle = new Bundle();
+        bundle.putString("message",message);
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.move_up, 0, 0, R.anim.move_up);
+        transaction.replace(R.id.map_dashboard, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+    private void SetupMap(@NonNull View view, @NonNull Context ctx){
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
                 -1.0f, 0.0f, 0.0f, 0.0f, 255f,
                 0.0f, -1.0f, 0.0f, 0.0f, 255f,
@@ -177,13 +249,12 @@ public class frag_map extends Fragment {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
                     client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
-                    replaceFragment(new frag_map_dashboard1());//Hiển thị và thêm hiệu ứng
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
-
+                replaceFragment(new frag_map_dashboard1(),client.uglyJson);//Hiển thị và thêm hiệu ứng
                 return true;
             }
         });
@@ -193,72 +264,14 @@ public class frag_map extends Fragment {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
                     client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
-                    replaceFragment(new frag_map_dashboard2());//Hiển thị và thêm hiệu ứng
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
-
+                replaceFragment(new frag_map_dashboard2(),client.uglyJson);//Hiển thị và thêm hiệu ứng
                 return true;
             }
         });
-
-        String[] Permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION};
-
-        requestPermissionsIfNecessary(Permission);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //Backpressed
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                requireActivity().getSupportFragmentManager().beginTransaction().remove(frag_map.this).commit();
-            }
-        });
-
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        Configuration.getInstance().load(requireContext(), prefs);
-        if (map != null) {
-            map.onResume();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        Configuration.getInstance().save(requireContext(), prefs);
-        if (map != null) {
-            map.onPause();
-        }
-    }
-
-    private void requestPermissionsIfNecessary(String[] permissions) {
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(permission);
-            }
-        }
-        if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-    //Hiển thị và thêm hiệu ứng
-    private void replaceFragment(Fragment fragment) {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.move_up, 0, 0, R.anim.move_up);
-        transaction.replace(R.id.map_dashboard, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
     }
 }

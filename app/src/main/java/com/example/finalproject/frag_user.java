@@ -73,13 +73,17 @@ public class frag_user extends Fragment {
         //Random ava
         Log.d("TAG", "mmkvInt: "+kv.getInt("ranNum", 7));
         int retrievedValue = kv.decodeInt("ranNum");
-        if (kv.getInt("ranNum", 7)==7) {
-            Random random = new Random();
-            randomInt = random.nextInt(avtList.length);
-            avt.setImageResource(avtList[randomInt]);
-            kv.encode("ranNum",randomInt);
-        } else {
-            avt.setImageResource(avtList[retrievedValue]);
+        try {
+            if (kv.getInt("ranNum", 7)==7) {
+                Random random = new Random();
+                randomInt = random.nextInt(avtList.length);
+                avt.setImageResource(avtList[randomInt]);
+                kv.encode("ranNum",randomInt);
+            } else {
+                avt.setImageResource(avtList[retrievedValue]);
+            }
+        }catch (Exception e){
+            Log.d("TAG",e.getMessage());
         }
         Log.d("TAG", "mmkvInt: "+kv.getInt("ranNum", 7));
 

@@ -52,7 +52,7 @@
                             android:textColor="@color/white"
                             android:textSize="15dp" />
                         <TextView
-                            android:id="@+id/item_1"
+                            android:id="@+id/node_id1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -89,7 +89,7 @@
                             android:textColor="@color/white"
                             android:textSize="15dp" />
                         <TextView
-                            android:id="@+id/item_2"
+                            android:id="@+id/latitude1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -133,7 +133,7 @@
                             android:textColor="@color/white"
                             android:textSize="15dp" />
                         <TextView
-                            android:id="@+id/item_3"
+                            android:id="@+id/longtitude1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -169,7 +169,7 @@
                             android:textColor="@color/white"
                             android:textSize="15dp" />
                         <TextView
-                            android:id="@+id/item_4"
+                            android:id="@+id/brightness"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -196,7 +196,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
                     android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
@@ -216,7 +217,7 @@
                             android:textColor="@color/white"
                             android:textSize="15dp" />
                         <TextView
-                            android:id="@+id/item_5"
+                            android:id="@+id/colorTemp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
