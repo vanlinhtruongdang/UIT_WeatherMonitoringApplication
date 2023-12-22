@@ -18,27 +18,18 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.finalproject.Utils.MyWebSocketClient;
 import com.tencent.mmkv.MMKV;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -46,9 +37,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 public class frag_map extends Fragment {
@@ -120,7 +108,6 @@ public class frag_map extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Backpressed
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

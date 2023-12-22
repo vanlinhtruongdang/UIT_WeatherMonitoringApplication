@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import android.util.Log;
@@ -23,29 +22,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import android.os.Handler;
 import android.os.Looper;
 
-import com.example.finalproject.R;
 import com.example.finalproject.Utils.MyWebSocketClient;
 import com.tencent.mmkv.MMKV;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -53,16 +43,12 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
-import okhttp3.WebSocket;
-
 
 public class frag_home extends Fragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    MyWebSocketClient client = null;
+    private MyWebSocketClient wssClient = null;
     private MapView map = null;
     private MMKV kv = null;
-    private LinearLayout layout;
-    private TextView textView;
     private long ZoomSpeed = 500;
     private double MinZoom = 18.0;
     private double MaxZoom = 21.0;
@@ -70,44 +56,31 @@ public class frag_home extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
-    String accessToken;
-    Button btn_fullScreen;
+    private Button btn_fullScreen = null;
+    private TextView timeTextView = null, dayOfWeekTextView = null, dateTextView = null;
 
-    public frag_home() {
-        // Required empty public constructor
-    }
+    private static final long UPDATE_INTERVAL = 30000;
+    private Handler handler = null;
+    private Runnable updateTimeRunnable = null;
 
-    public static frag_home newInstance() {
-        frag_home fragment = new frag_home();
-        return fragment;
-    }
+    public frag_home() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-    private TextView timeTextView, dayOfWeekTextView, dateTextView;
+    public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);}
 
-    // Thời gian cập nhật lại sau mỗi 1 phút
-    private static final long UPDATE_INTERVAL = 30000; // 30 seconds
-
-    private Handler handler = new Handler(Looper.getMainLooper());
-    private Runnable updateTimeRunnable = new Runnable() {
-        @Override
-        public void run() {
-            displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
-            // Tự động cập nhật sau mỗi khoảng thời gian
-            handler.postDelayed(this, UPDATE_INTERVAL);
-        }
-    };
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_home, container, false);
+
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        wssClient = homeActivity.getSocket();
+
         timeTextView = view.findViewById(R.id.tv_time);
         dayOfWeekTextView = view.findViewById(R.id.tv_dow);
         dateTextView = view.findViewById(R.id.tv_date);
         btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
+
         btn_fullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +92,7 @@ public class frag_home extends Fragment {
         });
 
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
             }
@@ -133,21 +106,28 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        MMKV.initialize(this.getContext());
-        kv = MMKV.defaultMMKV();
-        accessToken = kv.decodeString("AccessToken");
-        try{
-            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
-            client.connect();
-        } catch (URISyntaxException e) {
-            Log.d("WebSocket","Failed");
-        }
+        displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
+
         map = view.findViewById(R.id.map);
+        UpdateMark1(view);
+        UpdateMark2(view);
+
         SetupMap(view,ctx);
         String[] Permission = {
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_FINE_LOCATION};
         requestPermissionsIfNecessary(Permission);
+
+        handler = new Handler(Looper.getMainLooper());
+        updateTimeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
+                UpdateMark1(view);
+                UpdateMark2(view);
+                handler.postDelayed(this, UPDATE_INTERVAL);
+            }
+        };
     }
 
     @Override
@@ -288,14 +268,14 @@ public class frag_home extends Fragment {
     }
     private void UpdateMark1(@NonNull View view){
         try {
-            client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+            wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
             Thread.sleep(100);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
+        Log.d("Mark1", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
         try{
-            String formatString = client.uglyJson.substring(16,client.uglyJson.length());
+            String formatString = wssClient.uglyJson.substring(16,wssClient.uglyJson.length());
             if (!formatString.equals("{}")) {
                 JSONObject jsonObject = new JSONObject(formatString);
                 String messageId = jsonObject.getString("messageId");
@@ -323,20 +303,21 @@ public class frag_home extends Fragment {
                     ws.setText(windSpeed.getString("value").concat(" km/h"));
                 }
             }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            Log.d("FragHome", e.toString());
         }
     }
     private void UpdateMark2(@NonNull View view){
         try {
-            client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+            wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
             Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            Log.d("FragHome", e.toString());
         }
-        Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
+
+        Log.d("Mark2", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
         try{
-            String formatString = client.uglyJson.substring(16,client.uglyJson.length());
+            String formatString = wssClient.uglyJson.substring(16,wssClient.uglyJson.length());
             if (!formatString.equals("{}")) {
                 JSONObject jsonObject = new JSONObject(formatString);
                 String messageId = jsonObject.getString("messageId");
@@ -355,9 +336,8 @@ public class frag_home extends Fragment {
                     ct.setText(colourTemperature.getString("value").concat("°K"));
                 }
             }
-            // notification
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            Log.d("FragHome", e.toString());
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.finalproject.Utils;
 
+
 import com.example.finalproject.Model.Point;
 import com.example.finalproject.Model.Token;
 import com.example.finalproject.Model.User;
@@ -19,7 +20,6 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
-
 public interface ApiService {
     @GET("auth/realms/master/protocol/openid-connect/auth")
     Call<ResponseBody> getAuthUrl(
@@ -48,12 +48,6 @@ public interface ApiService {
                          @Field("username") String username,
                          @Field("password") String password,
                          @Field("grant_type") String grant_type);
-    @FormUrlEncoded
-    @POST("/auth/realms/master/protocol/openid-connect/token")
-    Call<ResponseBody> SignIn(@Field("client_id") String client_id,
-                              @Field("username") String username,
-                              @Field("password") String password,
-                              @Field("grant_type") String grant_type);
     @Headers({"Accept: application/json"})
     @POST("/api/master/asset/datapoint/5zI6XqkQVSfdgOrZ1MyWEf/attribute/{attributeName}")
     Call<List<Point>> GetChart(@Header("Authorization") String token,

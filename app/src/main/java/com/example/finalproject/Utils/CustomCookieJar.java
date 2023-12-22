@@ -9,7 +9,6 @@ import okhttp3.HttpUrl;
 
 public class CustomCookieJar implements CookieJar {
     private List<Cookie> cookies = new ArrayList<>();
-
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
         if (this.cookies.isEmpty())

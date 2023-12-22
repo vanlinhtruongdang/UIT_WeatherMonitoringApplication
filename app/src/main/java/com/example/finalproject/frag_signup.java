@@ -6,12 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.finalproject.Utils.ApiService;
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,26 +22,20 @@ import org.jsoup.nodes.Element;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-
 
 public class frag_signup extends Fragment {
-
-    private Button signUpButton;
-    private TextInputEditText firstNameEditText;
-    private TextInputEditText lastNameEditText;
-    private TextInputEditText usernameEditText ;
-    private TextInputEditText emailEditText ;
-    private TextInputEditText passwordEditText;
-    private TextInputEditText confirmPasswordEditText;
-    public frag_signup() {
-        // Required empty public constructor
-    }
+    private ApiService apiService = null;
+    private Button signUpButton = null;
+    private TextInputEditText firstNameEditText = null;
+    private TextInputEditText lastNameEditText = null;
+    private TextInputEditText usernameEditText = null;
+    private TextInputEditText emailEditText = null;
+    private TextInputEditText passwordEditText = null;
+    private TextInputEditText confirmPasswordEditText = null;
+    public frag_signup() {}
 
     public static frag_signup newInstance() {
         frag_signup fragment = new frag_signup();
@@ -64,6 +56,10 @@ public class frag_signup extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        apiService = mainActivity.getAPIService();
+
         signUpButton = view.findViewById(R.id.btn_entersignup);
         firstNameEditText = view.findViewById(R.id.et_fname);
         lastNameEditText = view.findViewById(R.id.et_lname);
@@ -74,30 +70,18 @@ public class frag_signup extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Lấy dữ liệu từ các trường EditText
                 String firstName = firstNameEditText.getText().toString();
                 String lastName = lastNameEditText.getText().toString();
                 String username = usernameEditText.getText().toString();
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 String confirmPassword = confirmPasswordEditText.getText().toString();
-                String register = "";
 
                 ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
                 networkExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                                    .cookieJar(new com.example.finalproject.Utils.CustomCookieJar())
-                                    .build();
-
-                            Retrofit retrofit = new Retrofit.Builder()
-                                    .baseUrl("https://uiot.ixxc.dev/")
-                                    .client(okHttpClient)
-                                    .build();
-
-                            ApiService apiService = retrofit.create(ApiService.class);
                             Call<ResponseBody> authUrlCall = apiService.getAuthUrl(
                                     "code",
                                     "openremote",
@@ -107,7 +91,6 @@ public class frag_signup extends Fragment {
                                 Response<ResponseBody> AuthUrlResponse = authUrlCall.execute();
                                 if (AuthUrlResponse.isSuccessful()) {
                                     String HTML = AuthUrlResponse.body().string(); // Extract HTML source
-                                    Headers Header = AuthUrlResponse.headers();
                                     String RegUrl = ExtractFeature(HTML, "a", "href"); // Get registration URL
 
                                     // Step 2: request 2th HTTP GET to have submit form
@@ -127,7 +110,7 @@ public class frag_signup extends Fragment {
                                                     email,
                                                     password,
                                                     confirmPassword,
-                                                    register);
+                                                    "");
 
                                             // Step 3: Submit to form
                                             Response<ResponseBody> SubmitRespond = SubmitCall.execute();
@@ -137,7 +120,6 @@ public class frag_signup extends Fragment {
                                                 Log.d("SignUp",Integer.toString(SubmitRespond.code()));
                                             }
                                             else if(SubmitRespond.code() == 401){
-                                                //Notification
 
                                             } else{
                                                 Log.d("SignUp",SubmitRespond.message().toString());

@@ -1,6 +1,5 @@
 package com.example.finalproject;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,11 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.finalproject.Model.Token;
 import com.example.finalproject.Model.User;
-import com.example.finalproject.R;
 import com.example.finalproject.Utils.ApiService;
-import com.google.android.material.textfield.TextInputEditText;
 import com.tencent.mmkv.MMKV;
 
 import java.io.IOException;
@@ -31,7 +27,6 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
