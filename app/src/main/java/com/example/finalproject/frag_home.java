@@ -8,6 +8,8 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -70,6 +72,7 @@ public class frag_home extends Fragment {
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
     String accessToken;
     Button btn_fullScreen;
+
     public frag_home() {
         // Required empty public constructor
     }
@@ -114,6 +117,14 @@ public class frag_home extends Fragment {
                         .commit();
             }
         });
+
+        OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+            }
+        };
+        onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
         return view;
     }
 

@@ -3,6 +3,8 @@ package com.example.finalproject;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import com.example.finalproject.Model.Point;
@@ -96,8 +99,18 @@ public class frag_graph extends Fragment implements DateTimePickerFragment.OnDat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.frag_graph, container, false);
+        View view = inflater.inflate(R.layout.frag_graph, container, false);
+        OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, new frag_home());
+                transaction.commit();
+            }
+        };
+        onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
+        return view;
     }
 
     @Override

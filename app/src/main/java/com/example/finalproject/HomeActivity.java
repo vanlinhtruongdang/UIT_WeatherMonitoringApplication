@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -15,26 +16,31 @@ import com.example.finalproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.tencent.mmkv.MMKV;
 
 public class HomeActivity extends AppCompatActivity {
     FloatingActionButton fab;
     FragmentManager fragmentManager;
     BottomNavigationView bottomNavigationView;
-    String accessToken;
-    String refreshToken;
-    String expireIn;
+
+    private MMKV mmkvInt;
+    private MMKV checkedMmkv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Intent intent = getIntent();
-        accessToken = intent.getStringExtra("accessToken");
-        refreshToken = intent.getStringExtra("refreshToken");
-        expireIn = intent.getStringExtra("expireIn");
+//        MMKV.initialize(this);
+//        mmkvInt = MMKV.defaultMMKV();
+//        mmkvInt.encode("ranNum", 7);
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setSelectedItemId(R.id.fab);
+
+//        Log.d("TAG_home", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
+//        Fragment frag_user = new frag_user();
+//        ((com.example.finalproject.frag_user) frag_user).setMMKVInt(mmkvInt);
 
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -63,12 +69,19 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Xóa dữ liệu mmkv
+        mmkvInt.clearAll();
+        Log.d("TAG", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
     private void replaceFragment(Fragment fragment) {
-        Bundle bundle = new Bundle();
-        bundle.putString("accessToken", accessToken);
-        bundle.putString("refreshToken", refreshToken);
-        bundle.putString("expireIn", expireIn);
-        fragment.setArguments(bundle);
         FragmentTransaction Transaction = fragmentManager.beginTransaction();
         Transaction.replace(R.id.frame_layout, fragment);
         Transaction.commit();
