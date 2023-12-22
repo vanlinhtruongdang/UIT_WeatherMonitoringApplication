@@ -23,24 +23,16 @@ public class HomeActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     BottomNavigationView bottomNavigationView;
 
-    private MMKV mmkvInt;
-    private MMKV checkedMmkv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-//        MMKV.initialize(this);
-//        mmkvInt = MMKV.defaultMMKV();
-//        mmkvInt.encode("ranNum", 7);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setSelectedItemId(R.id.fab);
 
-//        Log.d("TAG_home", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
-//        Fragment frag_user = new frag_user();
-//        ((com.example.finalproject.frag_user) frag_user).setMMKVInt(mmkvInt);
 
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -51,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
                     replaceFragment(new frag_user());
                     return true;
                 } else if (itemId == R.id.graph) {
-                    replaceFragment(new frag_graph());
+                    replaceFragment(new frag_chart());
                     return true;
                 }
                 return false;
@@ -68,13 +60,6 @@ public class HomeActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(R.id.fab);
             }
         });
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Xóa dữ liệu mmkv
-        mmkvInt.clearAll();
-        Log.d("TAG", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
     }
 
     @Override

@@ -177,6 +177,7 @@ public class frag_map extends Fragment {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
                     client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+                    replaceFragment(new frag_map_dashboard1());//Hiển thị và thêm hiệu ứng
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -192,6 +193,7 @@ public class frag_map extends Fragment {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
                     client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+                    replaceFragment(new frag_map_dashboard2());//Hiển thị và thêm hiệu ứng
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -250,5 +252,13 @@ public class frag_map extends Fragment {
                     permissionsToRequest.toArray(new String[0]),
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+    }
+    //Hiển thị và thêm hiệu ứng
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.move_up, 0, 0, R.anim.move_up);
+        transaction.replace(R.id.map_dashboard, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

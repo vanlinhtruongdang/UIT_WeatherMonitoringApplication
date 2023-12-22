@@ -10,14 +10,16 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-public class frag_map_dashboard extends Fragment {
 
-    public frag_map_dashboard() {
-        // Required empty public constructor
+public class frag_map_dashboard2 extends Fragment {
+
+
+    public frag_map_dashboard2() {
     }
 
-    public static frag_map_dashboard newInstance() {
-        frag_map_dashboard fragment = new frag_map_dashboard();
+
+    public static frag_map_dashboard2 newInstance() {
+        frag_map_dashboard2 fragment = new frag_map_dashboard2();
         return fragment;
     }
 
@@ -29,7 +31,6 @@ public class frag_map_dashboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_map_dashboard, container, false);
         //BackPressed
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
@@ -41,7 +42,6 @@ public class frag_map_dashboard extends Fragment {
             }
         };
         onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
-
-        return view;
+        return inflater.inflate(R.layout.frag_map_dashboard2, container, false);
     }
 }
