@@ -81,6 +81,7 @@ public class frag_signin extends Fragment {
 
                                 Intent intent = new Intent(getActivity(), HomeActivity.class);
                                 startActivity(intent);
+                                getActivity().finish();
                                 Log.d("SignIn",response.body().getAccess_token());
                             }
                             else{
