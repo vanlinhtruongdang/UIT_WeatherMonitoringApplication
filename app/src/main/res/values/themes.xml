@@ -1,0 +1,32 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.FinalAndroidPrj" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+    <style name="Theme.FinalAndroidPrj" parent="Base.Theme.FinalAndroidPrj" />
+    <style name="TextInputLayoutFilledStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="hintTextColor">@color/white</item>
+        <item name="boxStrokeColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+    <style name="TextInputLayoutOutLinedStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/white</item>
+        <item name="boxStrokeColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="boxCornerRadiusBottomEnd">50dp</item>
+        <item name="boxCornerRadiusBottomStart">50dp</item>
+        <item name="boxCornerRadiusTopEnd">50dp</item>
+        <item name="boxCornerRadiusTopStart">50dp</item>
+    </style>
+    <style name="FloatingBtn" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:width">100dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:backgroundTint">#005FC0</item>
+        <item name="tint">@color/white</item>
+    </style>
+    <style name="bottmNavView" parent="Widget.Design.BottomNavigationView">
+        <item name="rippleColor">@color/color_1</item>
+    </style>
+</resources>
