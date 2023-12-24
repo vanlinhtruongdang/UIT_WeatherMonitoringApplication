@@ -1,7 +1,6 @@
 package com.example.finalproject;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -11,44 +10,37 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.finalproject.R;
+import com.example.finalproject.Utils.MyWebSocketClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.tencent.mmkv.MMKV;
 
-public class HomeActivity extends AppCompatActivity {
-    FloatingActionButton fab;
-    FragmentManager fragmentManager;
-    BottomNavigationView bottomNavigationView;
-    private MMKV mmkvInt;
-    private MMKV checkedMmkv;
+import java.net.URISyntaxException;
 
+public class HomeActivity extends MainActivity {
+    private MyWebSocketClient wssClient = null;
+    private MMKV kv = null;
+    private String accessToken = null;
+    private FloatingActionButton fab = null;
+    private FragmentManager fragmentManager = null;
+    private BottomNavigationView bottomNavigationView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        MMKV.initialize(this);
-        mmkvInt = MMKV.defaultMMKV();
-        mmkvInt.encode("ranNum", 7);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setSelectedItemId(R.id.fab);
-
-        // Truyền mmkv vào fragment
-        Log.d("TAG", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
-        Fragment frag_user = new frag_user();
-        ((com.example.finalproject.frag_user) frag_user).setMMKVInt(mmkvInt);
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if(itemId == R.id.user) {
-                    replaceFragment(frag_user);
-
+                    replaceFragment(new frag_user());
                     return true;
                 } else if (itemId == R.id.graph) {
                     replaceFragment(new frag_chart());
@@ -69,25 +61,27 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-    }
+        kv = MMKV.defaultMMKV();
+        accessToken = kv.decodeString("AccessToken");
+        try{
+            wssClient = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
+            wssClient.connect();
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+            if (wssClient.isOpen())
+                Log.d("WebSocket","Successfully!");
 
-        // Xóa dữ liệu mmkv
-        mmkvInt.clearAll();
-        Log.d("TAG", "mmkvInt: "+mmkvInt.getInt("ranNum", 7));
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+        } catch (URISyntaxException e) {
+            Log.d("WebSocket","Failed");
+        }
     }
 
     private void replaceFragment(Fragment fragment) {
         FragmentTransaction Transaction = fragmentManager.beginTransaction();
         Transaction.replace(R.id.frame_layout, fragment);
         Transaction.commit();
+    }
+
+    public MyWebSocketClient getSocket(){
+        return wssClient;
     }
 }

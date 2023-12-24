@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".frag_home">
-
+    android:layout_height="310dp"
+    tools:context=".frag_map_dashboard1"
+    android:paddingTop="20dp"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp"
+    android:background="@drawable/bgr_map_dashboard"
+    android:layout_margin="3dp">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
+        android:layout_height="wrap_content">
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp">
             <LinearLayout
-                android:id="@+id/row1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+
                 >
 
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
@@ -42,46 +43,34 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:orientation="vertical">
-
                         <TextView
-                            android:id="@+id/tv_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interblack"
-                            android:text="hh:mm"
-                            android:textColor="@color/white"
-                            android:textSize="45dp" />
-
-                        <TextView
-                            android:id="@+id/tv_dow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Day"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-
-                        <TextView
-                            android:id="@+id/tv_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/regular"
-                            android:text="dd/mm/yyyy"
+                            android:text="NodeID"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/node_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"                    android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
@@ -90,82 +79,79 @@
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_temp" />
-
-                        <TextView
-                            android:id="@+id/tv_temp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nan°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/regular"
-                            android:text="Temparature"
+                            android:text="Latitude"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/latitude"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:padding="10dp">
-                <FrameLayout
-                    android:padding="3dp"
-                    android:layout_width="420dp"
-                    android:layout_height="200dp"
-                    android:background="@drawable/menu_des"
-                    >
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="25dp"
-                        >
-
-                        <org.osmdroid.views.MapView
-                            android:id="@+id/map"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                        </org.osmdroid.views.MapView>
-                        <Button
-                            android:id="@+id/btn_fullscreen"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_centerInParent="true"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@drawable/ic_fullscreen"
-                            />
-
-                    </androidx.cardview.widget.CardView>
-                </FrameLayout>
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+                >
 
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:background="@drawable/item_map_dashboard"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/regular"
+                            android:text="Longtitude"
+                            android:textColor="@color/white"
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/longtitude"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"                    android:layout_weight="1"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
@@ -175,21 +161,50 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_humidity" />
-
                         <TextView
-                            android:id="@+id/tv_humidity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/regular"
+                            android:text="Temperature"
+                            android:textColor="@color/white"
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/temperature"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/interbold"
-                            android:text="Nan%"
+                            android:text="20°C"
                             android:textColor="@color/white"
                             android:textSize="30dp" />
 
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_map_dashboard"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -197,132 +212,34 @@
                             android:fontFamily="@font/regular"
                             android:text="Humidity"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/humidity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
-
                 </RelativeLayout>
-
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:gravity="center"
                         android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_brightness" />
-
-                        <TextView
-                            android:id="@+id/tv_brightness"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nan%"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Brightness"
-                            android:textColor="@color/white"
-                            android:textSize="20dp" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/menu_des"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_rain" />
-
-                        <TextView
-                            android:id="@+id/tv_rainfall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nanmm"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Rainfall"
-                            android:textColor="@color/white"
-                            android:textSize="20dp" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/menu_des"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_wind" />
-
-                        <TextView
-                            android:id="@+id/tv_windspeed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nan km/h"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -330,63 +247,72 @@
                             android:fontFamily="@font/regular"
                             android:text="Wind Speed"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/windSpeed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
                 </RelativeLayout>
+
+
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+                >
 
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:gravity="center"
                         android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_colortemp" />
-
-                        <TextView
-                            android:id="@+id/tv_colortemp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nan°K"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/regular"
-                            android:text="Colour Temp"
+                            android:text="Rainfall"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/rainFall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
-
                 </RelativeLayout>
-
                 <RelativeLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/menu_des"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"                    android:layout_weight="1"
+                    android:background="@drawable/item_map_dashboard"
                     android:padding="10dp">
 
                     <LinearLayout
@@ -395,21 +321,6 @@
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/logo_wind_direction" />
-
-                        <TextView
-                            android:id="@+id/tv_winddirect"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="Nan km/h"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -418,13 +329,20 @@
                             android:fontFamily="@font/regular"
                             android:text="Wind Direction"
                             android:textColor="@color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
+                        <TextView
+                            android:id="@+id/windDirect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/interbold"
+                            android:text="20°C"
+                            android:textColor="@color/white"
+                            android:textSize="30dp" />
+
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

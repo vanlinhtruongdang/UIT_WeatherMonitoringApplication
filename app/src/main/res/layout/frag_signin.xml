@@ -22,11 +22,12 @@
             android:layout_height="60dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp"
-            android:hint="Username"
+            android:hint="User name"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/si_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"/>
@@ -42,12 +43,14 @@
             app:hintTextColor="@color/white">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/si_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:textColor="@color/white"/>
         </com.google.android.material.textfield.TextInputLayout>
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_signin"
             android:layout_width="196dp"
             android:textAllCaps="false"
             android:layout_height="60dp"
