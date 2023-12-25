@@ -85,7 +85,7 @@ public class frag_home extends Fragment {
             @Override
             public void onClick(View v) {
                 requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map_container, new frag_map())
+                        .replace(R.id.frame_home, new frag_map())
                         .addToBackStack(null)
                         .commit();
             }

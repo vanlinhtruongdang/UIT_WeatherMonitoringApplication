@@ -5,7 +5,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:context=".frag_user"
-    android:layout_gravity="center">
+    android:layout_gravity="center_horizontal"
+    >
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,17 +35,41 @@
             android:text="trinhtit2003@gmail.com"
             android:textColor="@color/white"
             android:fontFamily="@font/regular"
-            android:layout_margin="20dp"
-            />
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="200dp"
+            android:layout_margin="20dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_logout"
-            android:text="Log out"
-            android:textColor="@color/white"
-            android:background="@drawable/btn_logout"
-            android:layout_margin="20dp"
-            />
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_infor"
+                android:text="User information"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_blue"
+                android:layout_margin="20dp"
+                android:textAllCaps="false" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_change"
+                android:text="Change password"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_blue"
+                android:layout_margin="20dp"
+                android:textAllCaps="false" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_logout"
+                android:text="Log out"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_logout"
+                android:layout_margin="20dp"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
 

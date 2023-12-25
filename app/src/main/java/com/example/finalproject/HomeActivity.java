@@ -75,6 +75,7 @@ public class HomeActivity extends MainActivity {
         }
     }
 
+
     private void replaceFragment(Fragment fragment) {
         FragmentTransaction Transaction = fragmentManager.beginTransaction();
         Transaction.replace(R.id.frame_layout, fragment);

@@ -127,30 +127,35 @@
                     android:padding="3dp"
                     android:layout_width="420dp"
                     android:layout_height="200dp"
-                    android:background="@drawable/menu_des"
-                    >
+                    android:background="@drawable/menu_des">
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:cardCornerRadius="25dp"
-                        >
-
+                        app:cardCornerRadius="25dp">
                         <org.osmdroid.views.MapView
                             android:id="@+id/map"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                         </org.osmdroid.views.MapView>
-                        <Button
-                            android:id="@+id/btn_fullscreen"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_centerInParent="true"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@drawable/ic_fullscreen"
-                            />
-
                     </androidx.cardview.widget.CardView>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_fullscreen"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/btn_zoom21"
+                        />
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_center"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/btn_center21"
+                        />
                 </FrameLayout>
             </RelativeLayout>
 

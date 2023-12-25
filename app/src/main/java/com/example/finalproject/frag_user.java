@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.finalproject.Model.User;
 import com.example.finalproject.Utils.ApiService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tencent.mmkv.MMKV;
 
 import java.io.IOException;
@@ -86,6 +88,9 @@ public class frag_user extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
+                Activity activity = getActivity();
+                BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottomNavigationView);
+                bottomNavigationView.setSelectedItemId(R.id.fab);
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, new frag_home());
                 transaction.commit();
@@ -144,4 +149,5 @@ public class frag_user extends Fragment {
             }
         });
     }
+
 }

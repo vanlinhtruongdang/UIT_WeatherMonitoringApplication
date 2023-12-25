@@ -1,6 +1,7 @@
 package com.example.finalproject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tencent.mmkv.MMKV;
 
@@ -106,7 +108,6 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
             }
         });
 
-
         generateChartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +127,9 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
+                Activity activity = getActivity();
+                BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottomNavigationView);
+                bottomNavigationView.setSelectedItemId(R.id.fab);
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, new frag_home());
                 transaction.commit();

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -54,6 +55,8 @@ public class frag_map extends Fragment {
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
     private Button btn_center;
     String accessToken;
+    private Fragment currentFragment = null;
+
 
 
     public static frag_map newInstance() {
@@ -103,6 +106,17 @@ public class frag_map extends Fragment {
             Manifest.permission.ACCESS_FINE_LOCATION};
 
     requestPermissionsIfNecessary(Permission);
+    map.setOnTouchListener(new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (currentFragment != null) {
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.remove(currentFragment).commit();
+                currentFragment = null;
+            }
+            return false;
+        }
+    });
 }
 
     @Override
@@ -157,6 +171,7 @@ public class frag_map extends Fragment {
         transaction.replace(R.id.map_dashboard, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        currentFragment = fragment;
     }
     private void SetupMap(@NonNull View view, @NonNull Context ctx){
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
