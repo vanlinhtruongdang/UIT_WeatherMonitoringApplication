@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
@@ -109,6 +110,7 @@ public class frag_home extends Fragment {
         displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
 
         map = view.findViewById(R.id.map);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         UpdateMark1(view);
         UpdateMark2(view);
 

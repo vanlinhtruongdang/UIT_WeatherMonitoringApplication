@@ -34,6 +34,7 @@ import com.tencent.mmkv.MMKV;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
@@ -73,7 +74,6 @@ public class frag_map extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view  = inflater.inflate(R.layout.frag_map, container, false);
         MMKV.initialize(this.getContext());
         kv = MMKV.defaultMMKV();

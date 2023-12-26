@@ -1,5 +1,5 @@
-<!-- activity_main.xml -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +15,7 @@
             android:id="@+id/testss"
             app:boxStrokeColor="@color/white"
             app:hintTextColor="@color/white"
+            app:boxBackgroundColor="#00034C"
             android:textColorHint="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,8 +28,7 @@
                 android:layout_height="60dp"
                 android:inputType="none"
                 android:hint="Choose"
-                app:simpleItems="@array/parameter_array"
-                />
+                app:simpleItems="@array/parameter_array" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -36,8 +36,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:layout_marginTop="40dp">
+            android:layout_marginTop="20dp">
             <TextView
+                android:padding="15dp"
+                android:background="@drawable/btn_blue"
                 android:id="@+id/startTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,11 +48,13 @@
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:clickable="true"
-                android:fontFamily="@font/interbold"
-                android:layout_marginBottom="20dp"/>
+                android:fontFamily="@font/regular"
+                android:layout_marginBottom="20dp" />
 
             <TextView
-                android:fontFamily="@font/interbold"
+                android:padding="15dp"
+                android:background="@drawable/btn_blue"
+                android:fontFamily="@font/regular"
                 android:id="@+id/endTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +71,7 @@
             android:background="@drawable/btn_main"
             android:id="@+id/generateChartButton"
             android:textColor="@color/white"
-            android:fontFamily="@font/medium"
+            android:fontFamily="@font/interbold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/endTimeTextView"
@@ -81,8 +85,5 @@
             android:layout_height="match_parent"
             android:layout_marginTop="30dp"
             android:layout_below="@+id/generateChartButton"/>
-
     </LinearLayout>
-
-
 </FrameLayout>

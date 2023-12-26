@@ -21,7 +21,6 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NGO KHANH TRINH"
             android:textColor="@color/white"
             android:fontFamily="@font/interblack"
             android:textSize="30dp"
