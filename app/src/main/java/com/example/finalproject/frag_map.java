@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.finalproject.Utils.MyWebSocketClient;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.tencent.mmkv.MMKV;
 
 import org.osmdroid.config.Configuration;
@@ -57,6 +59,8 @@ public class frag_map extends Fragment {
     private Button btn_center = null;
     private String accessToken = null;
     private Fragment currentFragment = null;
+
+
 
 
 
@@ -90,6 +94,7 @@ public class frag_map extends Fragment {
         btn_center = view.findViewById(R.id.btn_center);
         map = view.findViewById(R.id.map);
         SetupMap(view,ctx);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         btn_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

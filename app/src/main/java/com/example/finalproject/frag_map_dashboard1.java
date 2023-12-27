@@ -4,14 +4,22 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +27,6 @@ import org.json.JSONObject;
 
 public class frag_map_dashboard1 extends Fragment {
 
-    private TextView db_node_id;
     private TextView db_latitude;
     private TextView db_longtitude;
     private TextView db_rainfall;
@@ -27,6 +34,8 @@ public class frag_map_dashboard1 extends Fragment {
     private TextView db_humidity;
     private TextView db_wind_speed;
     private TextView db_wind_direction;
+    private LinearLayout bottomSheet;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     public frag_map_dashboard1() {
         // Required empty public constructor
@@ -69,7 +78,6 @@ public class frag_map_dashboard1 extends Fragment {
                     JSONObject windDirection = attributes.getJSONObject("windDirection");
                     JSONObject windSpeed = attributes.getJSONObject("windSpeed");
 
-                    db_node_id = view.findViewById(R.id.node_id);
                     db_latitude = view.findViewById(R.id.latitude);
                     db_longtitude = view.findViewById(R.id.longtitude);
                     db_rainfall = view.findViewById(R.id.rainFall);
@@ -78,7 +86,6 @@ public class frag_map_dashboard1 extends Fragment {
                     db_humidity = view.findViewById(R.id.humidity);
                     db_temperature = view.findViewById(R.id.temperature);
 
-                    db_node_id.setText(zero.getString("id"));
                     db_rainfall.setText(rainfall.getString("value").concat("mm"));
                     db_temperature.setText(temperature.getString("value").concat("°C"));
                     db_humidity.setText(humidity.getString("value").concat("%"));
@@ -103,6 +110,27 @@ public class frag_map_dashboard1 extends Fragment {
         };
         onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
 
+        //BottomSheet
+        bottomSheet = view.findViewById(R.id.bottomsheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setPeekHeight(0);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        ImageView hideSheet = view.findViewById(R.id.hideSheet);
+
+        ScrollView scrollView = view.findViewById(R.id.scrollview);
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        hideSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
         return view;
     }
 }

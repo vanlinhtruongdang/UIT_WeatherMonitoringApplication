@@ -61,7 +61,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Day"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:id="@+id/tv_date"
@@ -104,7 +104,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan°C"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -211,7 +211,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan%"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -253,7 +253,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan%"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -302,7 +302,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nanmm"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -344,7 +344,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan km/h"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -391,7 +391,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan°K"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -432,7 +432,7 @@
                             android:fontFamily="@font/interbold"
                             android:text="Nan km/h"
                             android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:textSize="25dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
