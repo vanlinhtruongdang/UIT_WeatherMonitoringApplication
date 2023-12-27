@@ -44,6 +44,7 @@ public class frag_signup extends Fragment {
     private TextInputEditText emailEditText = null;
     private TextInputEditText passwordEditText = null;
     private TextInputEditText confirmPasswordEditText = null;
+
     public frag_signup() {}
 
     public static frag_signup newInstance() {

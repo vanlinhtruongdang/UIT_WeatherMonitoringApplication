@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,8 @@ public class frag_signin extends Fragment {
     CustomCookieJar cookieJar = null;
     @Inject
     ApiService apiService = null;
+    private LoadingDialog loadingDialog;
+
     public frag_signin() {
     }
 
@@ -62,58 +66,70 @@ public class frag_signin extends Fragment {
         username = view.findViewById(R.id.si_username);
         password = view.findViewById(R.id.si_password);
         btn_signIn = view.findViewById(R.id.btn_signin);
+        loadingDialog = new LoadingDialog(requireContext());
         btn_signIn.setOnClickListener(v -> {
-            kv = MMKV.defaultMMKV();
-            kv.clearAll();
-            cookieJar.clear();
-            ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
-            networkExecutor.execute(() -> {
-                var getAuthPage = apiService.getAuthSession(
-                    "code",
-                    "openremote",
-                    "https://uiot.ixxc.dev/swagger/oauth2-redirect.html"
-                );
-
-                try {
-                    var authPage = getAuthPage.execute();
-                    if (authPage.isSuccessful()) {
-                        var authHTML = authPage.body().string(); // Extract HTML source
-                        var authURL = ExtractFeature(authHTML, "form", "action"); // Get auth URL
-
-                        var withCookies = apiService.getTokenWithCookies(
-                                authURL,
-                                username.getText().toString(),
-                                password.getText().toString()
-                        );
-
-                        var tokenCall = apiService.getTokenWithKeycloak(
+            loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            loadingDialog.show();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    kv = MMKV.defaultMMKV();
+                    kv.clearAll();
+                    cookieJar.clear();
+                    ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+                    networkExecutor.execute(() -> {
+                        var getAuthPage = apiService.getAuthSession(
+                                "code",
                                 "openremote",
-                                username.getText().toString(),
-                                password.getText().toString(),
-                                "password"
+                                "https://uiot.ixxc.dev/swagger/oauth2-redirect.html"
                         );
+                        try {
+                            var authPage = getAuthPage.execute();
+                            if (authPage.isSuccessful()) {
+                                var authHTML = authPage.body().string(); // Extract HTML source
+                                var authURL = ExtractFeature(authHTML, "form", "action"); // Get auth URL
 
-                        withCookies.execute();
+                                var withCookies = apiService.getTokenWithCookies(
+                                        authURL,
+                                        username.getText().toString(),
+                                        password.getText().toString()
+                                );
 
-                        var token = tokenCall.execute();
+                                var tokenCall = apiService.getTokenWithKeycloak(
+                                        "openremote",
+                                        username.getText().toString(),
+                                        password.getText().toString(),
+                                        "password"
+                                );
 
-                        if(token.isSuccessful()){
-                            String AccessToken = token.body().getAccess_token();
-                            kv.encode("AccessToken", AccessToken);
+                                withCookies.execute();
 
-                            Intent intent = new Intent(getActivity(), HomeActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                            Timber.d(AccessToken);
+                                var token = tokenCall.execute();
+
+                                if(token.isSuccessful()){
+                                    String AccessToken = token.body().getAccess_token();
+                                    kv.encode("AccessToken", AccessToken);
+
+                                    Intent intent = new Intent(getActivity(), HomeActivity.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                    Timber.d(AccessToken);
+                                }
+                                else{
+                                    Timber.d(token.message().toString());
+                                }
+                            }
+                        } catch (Exception e) {
+                            Timber.d(e);
                         }
-                        else{
-                            Timber.d(token.message().toString());
-                        }
+                    });
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
                     }
-                } catch (Exception e) {
-                    Timber.d(e);
                 }
-            });
+            },2000);
+
         });
     }
     protected String ExtractFeature(String html, String tag, String attribute) {
