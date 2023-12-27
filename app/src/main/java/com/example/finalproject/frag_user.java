@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.finalproject.Model.User;
 import com.example.finalproject.Utils.ApiService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tencent.mmkv.MMKV;
 
 import java.io.IOException;
@@ -38,16 +40,13 @@ public class frag_user extends Fragment {
     private MMKV kv = null;
     private String accessToken;
     private TextView name;
-    private TextView email;
+//    private TextView email;
     private String name_call;
-    private String email_call;
-    private Button btn_logout;
+//    private String email_call;
     private ImageView avt;
     private int[] avtList = {R.drawable.avt11, R.drawable.avt21, R.drawable.avt31, R.drawable.avt41, R.drawable.avt51};
     private int randomInt;
-    public frag_user() {
-        // Required empty public constructor
-    }
+    public frag_user() {}
     public static frag_user newInstance() {
         frag_user fragment = new frag_user();
         return fragment;
@@ -65,6 +64,10 @@ public class frag_user extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_user, container, false);
         avt = view.findViewById(R.id.iv_avt);
+        Fragment defaultFragment = new frag_user_option();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.frame_user, defaultFragment)
+                .commit();
         //Random ava
         Log.d("TAG", "mmkvInt: "+kv.getInt("ranNum", 7));
         int retrievedValue = kv.decodeInt("ranNum");
@@ -82,12 +85,14 @@ public class frag_user extends Fragment {
         }
         Log.d("TAG", "mmkvInt: "+kv.getInt("ranNum", 7));
 
-
         //BackPress
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
+                Activity activity = getActivity();
+                BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottomNavigationView);
+                bottomNavigationView.setSelectedItemId(R.id.fab);
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, new frag_home());
                 transaction.commit();
@@ -102,8 +107,11 @@ public class frag_user extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         accessToken = kv.decodeString("AccessToken");
         name = view.findViewById(R.id.tv_name);
-        email = view.findViewById(R.id.tv_mail);
-        btn_logout = view.findViewById(R.id.btn_logout);
+//        email = view.findViewById(R.id.tv_mail);
+        Fragment defaultFragment = new frag_user_option();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.frame_user, defaultFragment)
+                .commit();
         ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
         networkExecutor.execute(new Runnable() {
             @Override
@@ -119,12 +127,12 @@ public class frag_user extends Fragment {
                     if(response.isSuccessful()){
                         // notification successfull !!!
                         name_call = response.body().lastName + " " + response.body().firstName;
-                        email_call = response.body().email;
+//                        email_call = response.body().email;
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 name.setText(name_call);
-                                email.setText(email_call);
+//                                email.setText(email_call);
                             }
                         });
                     }
@@ -137,13 +145,7 @@ public class frag_user extends Fragment {
                 }
             }
         });
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
+
     }
+
 }

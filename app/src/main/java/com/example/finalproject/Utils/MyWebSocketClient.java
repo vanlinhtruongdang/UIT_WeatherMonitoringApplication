@@ -2,42 +2,52 @@ package com.example.finalproject.Utils;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class  MyWebSocketClient extends WebSocketClient {
+import timber.log.Timber;
+
+public class  MyWebSocketClient {
+    private WebSocketClient webSocketClient;
 
     public static String uglyJson = "REQUESTRESPONSE:{}";
-    public MyWebSocketClient(String serverUrl) throws URISyntaxException {
-        super(new URI(serverUrl));
+
+    public WebSocketClient getClient() {
+        return webSocketClient;
     }
 
-    @Override
-    public void onOpen(ServerHandshake handshake) {
-        Log.d("WebSocket","On open");
+    public void setServerUrl(@NonNull String serverUrl) throws URISyntaxException {
+        URI serverUri = new URI(serverUrl);
 
-    }
-    @Override
-    public void onMessage(String message) {
-        // Handle incoming messages from the server.
-        Log.d("WebSocket","On message");
-        this.uglyJson = message;
-        Log.d("WebSocket",uglyJson);
+        if (webSocketClient == null) {
+            webSocketClient = new WebSocketClient(serverUri) {
+                @Override
+                public void onOpen(ServerHandshake handshakedata) {
+                    Timber.d("Websocket on open");
+                }
+
+                @Override
+                public void onMessage(String message) {
+                    Timber.d("Websocket on message");
+                    uglyJson = message;
+                }
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    Timber.d("Websocket on close");
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Timber.d("Websocket on error");
+                }
+            };
+        }
     }
 
-    @Override
-    public void onClose(int code, String reason, boolean remote) {
-        // WebSocket connection is closed.
-        // Perform any necessary cleanup here.
-        Log.d("WebSocket","On close");
-    }
-
-    @Override
-    public void onError(Exception ex) {
-        // Handle any errors that occur during the WebSocket connection.
-        Log.d("WebSocket","On error");
-    }
 }

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_bgr"
-    tools:context=".HomeActivity">
+    tools:context=".HomeActivity"
+    android:id="@+id/frame_home">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fr1"
@@ -61,9 +62,7 @@
             android:layout_gravity="bottom"
             android:backgroundTint="#1e1e1e"
             app:fabCradleMargin="10dp"
-            app:fabCradleRoundedCornerRadius="20dp"
-            >
-
+            app:fabCradleRoundedCornerRadius="20dp">
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

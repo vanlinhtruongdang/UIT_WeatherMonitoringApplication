@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,23 +39,30 @@ import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
+
+@AndroidEntryPoint
 public class frag_home extends Fragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    private MyWebSocketClient wssClient = null;
+    @Inject
+    MyWebSocketClient wssClient;
     private MapView map = null;
     private MMKV kv = null;
     private long ZoomSpeed = 500;
     private double MinZoom = 18.0;
     private double MaxZoom = 21.0;
     private double ZoomLevel = 19.5;
-    private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
+    private GeoPoint UITLocation = new GeoPoint(10.8698, 106.80315);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
-    private Button btn_fullScreen = null;
+    private Button btn_fullScreen = null, btn_location = null, btn_center = null;
     private TextView timeTextView = null, dayOfWeekTextView = null, dateTextView = null;
 
     private static final long UPDATE_INTERVAL = 30000;
@@ -73,24 +79,6 @@ public class frag_home extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_home, container, false);
 
-        HomeActivity homeActivity = (HomeActivity) getActivity();
-        wssClient = homeActivity.getSocket();
-
-        timeTextView = view.findViewById(R.id.tv_time);
-        dayOfWeekTextView = view.findViewById(R.id.tv_dow);
-        dateTextView = view.findViewById(R.id.tv_date);
-        btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
-
-        btn_fullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map_container, new frag_map())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -106,9 +94,27 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
+        timeTextView = view.findViewById(R.id.tv_time);
+        dayOfWeekTextView = view.findViewById(R.id.tv_dow);
+        dateTextView = view.findViewById(R.id.tv_date);
         displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
 
         map = view.findViewById(R.id.map);
+        btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
+        btn_location = view.findViewById(R.id.btn_location);
+        btn_location.setText(UITLocation.toString());
+        btn_fullScreen.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_home, new frag_map())
+                        .addToBackStack(null)
+                        .commit());
+        btn_center = view.findViewById(R.id.btn_center);
+        btn_center.setOnClickListener(v -> {
+            map.getController().animateTo(UITLocation, ZoomLevel, ZoomSpeed);
+            btn_location.setText(UITLocation.toString());
+        });
+
         UpdateMark1(view);
         UpdateMark2(view);
 
@@ -231,49 +237,44 @@ public class frag_home extends Fragment {
         Station2Marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         Station2Marker.setIcon(ctx.getDrawable(R.drawable.cloud));
 
-        map.addOnFirstLayoutListener(new MapView.OnFirstLayoutListener() {
-            @Override
-            public void onFirstLayout(View v, int left, int top, int right, int bottom) {
-                map.setTileSource(TileSourceFactory.MAPNIK );
-                map.setMultiTouchControls(true);
-                map.setMinZoomLevel(MinZoom);
-                map.setMaxZoomLevel(MaxZoom);
-                map.getController().setZoom(ZoomLevel);
-                map.setScrollableAreaLimitLatitude(10.890, 10.865, 100);
-                map.setScrollableAreaLimitLongitude(106.7, 106.806, 100);
-                map.getController().setCenter(UITLocation);
-                map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
-                map.getOverlays().add(Station1Marker);
-                map.getOverlays().add(Station2Marker);
-                map.invalidate();
-            }
+        map.addOnFirstLayoutListener((v, left, top, right, bottom) -> {
+            map.setTileSource(TileSourceFactory.MAPNIK );
+            map.setMultiTouchControls(true);
+            map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+            map.setMinZoomLevel(MinZoom);
+            map.setMaxZoomLevel(MaxZoom);
+            map.getController().setZoom(ZoomLevel);
+            map.setScrollableAreaLimitLatitude(10.875, 10.865, 100);
+            map.setScrollableAreaLimitLongitude(106.800, 106.806, 100);
+            map.getController().setCenter(UITLocation);
+            map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
+            map.getOverlays().add(Station1Marker);
+            map.getOverlays().add(Station2Marker);
+            map.invalidate();
         });
 
-        Station1Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker, MapView mapView) {
-                map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                UpdateMark1(view);
-                return true;
-            }
+        Station1Marker.setOnMarkerClickListener((marker, mapView) -> {
+            map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
+            btn_location.setText(Station1.toString());
+            UpdateMark1(view);
+            return true;
         });
 
-        Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-            public boolean onMarkerClick(Marker marker, MapView mapView) {
-                map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
-                UpdateMark2(view);
-                return true;
-            }
+        Station2Marker.setOnMarkerClickListener((marker, mapView) -> {
+            map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
+            btn_location.setText(Station2.toString());
+            UpdateMark2(view);
+            return true;
         });
     }
     private void UpdateMark1(@NonNull View view){
         try {
-            wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+            wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
             Thread.sleep(100);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        Log.d("Mark1", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
+        Timber.d(wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
         try{
             String formatString = wssClient.uglyJson.substring(16,wssClient.uglyJson.length());
             if (!formatString.equals("{}")) {
@@ -304,18 +305,17 @@ public class frag_home extends Fragment {
                 }
             }
         } catch (Exception e) {
-            Log.d("FragHome", e.toString());
+            Timber.d(e);
         }
     }
     private void UpdateMark2(@NonNull View view){
         try {
-            wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+            wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
             Thread.sleep(100);
         } catch (Exception e) {
-            Log.d("FragHome", e.toString());
+            Timber.d(e);
         }
-
-        Log.d("Mark2", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
+        Timber.d(wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
         try{
             String formatString = wssClient.uglyJson.substring(16,wssClient.uglyJson.length());
             if (!formatString.equals("{}")) {
@@ -337,7 +337,7 @@ public class frag_home extends Fragment {
                 }
             }
         } catch (Exception e) {
-            Log.d("FragHome", e.toString());
+            Timber.d(e);
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,16 +34,22 @@ import com.tencent.mmkv.MMKV;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 
-import java.net.URISyntaxException;
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
+
+@AndroidEntryPoint
 public class frag_map extends Fragment {
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    MyWebSocketClient client = null;
+    @Inject
+    MyWebSocketClient wssClient;
     private MMKV kv = null;
     private MapView map = null;
     private long ZoomSpeed = 500;
@@ -52,9 +59,9 @@ public class frag_map extends Fragment {
     private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
-    private Button btn_center;
-    String accessToken;
-
+    private Button btn_center = null;
+    private String accessToken = null;
+    private Fragment currentFragment = null;
 
     public static frag_map newInstance() {
         frag_map fragment = new frag_map();
@@ -64,13 +71,11 @@ public class frag_map extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view  = inflater.inflate(R.layout.frag_map, container, false);
         MMKV.initialize(this.getContext());
         kv = MMKV.defaultMMKV();
@@ -84,14 +89,9 @@ public class frag_map extends Fragment {
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         btn_center = view.findViewById(R.id.btn_center);
-        try{
-            client = new MyWebSocketClient("wss://uiot.ixxc.dev/websocket/events?Realm=master&Authorization=Bearer%20"+accessToken);
-            client.connect();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
         map = view.findViewById(R.id.map);
         SetupMap(view,ctx);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         btn_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +103,17 @@ public class frag_map extends Fragment {
             Manifest.permission.ACCESS_FINE_LOCATION};
 
     requestPermissionsIfNecessary(Permission);
+    map.setOnTouchListener(new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (currentFragment != null) {
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.remove(currentFragment).commit();
+                currentFragment = null;
+            }
+            return false;
+        }
+    });
 }
 
     @Override
@@ -157,6 +168,7 @@ public class frag_map extends Fragment {
         transaction.replace(R.id.map_dashboard, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        currentFragment = fragment;
     }
     private void SetupMap(@NonNull View view, @NonNull Context ctx){
         ColorMatrix inverseMatrix = new ColorMatrix(new float[] {
@@ -217,11 +229,12 @@ public class frag_map extends Fragment {
             public void onFirstLayout(View v, int left, int top, int right, int bottom) {
                 map.setTileSource(TileSourceFactory.MAPNIK );
                 map.setMultiTouchControls(true);
+                map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
                 map.setMinZoomLevel(MinZoom);
                 map.setMaxZoomLevel(MaxZoom);
                 map.getController().setZoom(ZoomLevel);
-                map.setScrollableAreaLimitLatitude(10.95, 10.865, 100);
-                map.setScrollableAreaLimitLongitude(106.2, 106.806, 100);
+                map.setScrollableAreaLimitLatitude(10.875, 10.865, 100);
+                map.setScrollableAreaLimitLongitude(106.800, 106.806, 100);
                 map.getController().setCenter(UITLocation);
                 map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
                 map.getOverlays().add(Station1Marker);
@@ -235,13 +248,13 @@ public class frag_map extends Fragment {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
-                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+                    wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d("Mark1", client.uglyJson.substring(16,client.uglyJson.length()));
-                replaceFragment(new frag_map_dashboard1(),client.uglyJson);//Hiển thị và thêm hiệu ứng
+                Timber.d(wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
+                replaceFragment(new frag_map_dashboard1(),wssClient.uglyJson);//Hiển thị và thêm hiệu ứng
                 return true;
             }
         });
@@ -250,13 +263,13 @@ public class frag_map extends Fragment {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
-                    client.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+                    wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d("Mark2", client.uglyJson.substring(16,client.uglyJson.length()));
-                replaceFragment(new frag_map_dashboard2(),client.uglyJson);//Hiển thị và thêm hiệu ứng
+                Log.d("Mark2", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
+                replaceFragment(new frag_map_dashboard2(),wssClient.uglyJson);
                 return true;
             }
         });

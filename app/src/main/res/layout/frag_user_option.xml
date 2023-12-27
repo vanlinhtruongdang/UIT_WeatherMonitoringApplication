@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".frag_user_option">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_editAcc"
+            android:text="Edit Account"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_blue"
+            android:layout_margin="20dp"
+            android:textAllCaps="false" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_changePass"
+            android:text="Change Password"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_blue"
+            android:layout_margin="20dp"
+            android:textAllCaps="false" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_logout"
+            android:text="Log out"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_logout"
+            android:layout_margin="20dp"
+            />
+
+    </LinearLayout>
+</ScrollView>

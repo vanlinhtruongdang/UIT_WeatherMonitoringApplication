@@ -9,22 +9,31 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import timber.log.Timber;
+
 public class frag_map_dashboard2 extends Fragment {
 
 
-    private TextView db_node_id;
     private TextView db_latitude;
     private TextView db_longtitude;
     private TextView db_brightness;
     private TextView db_colorTemp;
+    private LinearLayout bottomSheet;
+    private BottomSheetBehavior bottomSheetBehavior;
 
 
     public frag_map_dashboard2() {
@@ -49,7 +58,7 @@ public class frag_map_dashboard2 extends Fragment {
 
         try{
             String formatString = uglyJson.substring(16,uglyJson.length());
-            Log.d("Mark2_db",formatString);
+            Timber.d(formatString);
             if (!formatString.equals("{}")) {
                 JSONObject jsonObject = new JSONObject(formatString);
                 String messageId = jsonObject.getString("messageId");
@@ -64,13 +73,11 @@ public class frag_map_dashboard2 extends Fragment {
                     JSONObject brightness = attributes.getJSONObject("brightness");
                     JSONObject colourTemperature = attributes.getJSONObject("colourTemperature");
 
-                    db_node_id = view.findViewById(R.id.node_id1);
                     db_latitude = view.findViewById(R.id.latitude1);
                     db_longtitude = view.findViewById(R.id.longtitude1);
                     db_brightness = view.findViewById(R.id.brightness);
                     db_colorTemp = view.findViewById(R.id.colorTemp);
 
-                    db_node_id.setText(zero.getString("id"));
                     db_longtitude.setText((coordinate.getString(0)));
                     db_latitude.setText(coordinate.getString(1));
                     db_brightness.setText(brightness.getString("value").concat("%"));
@@ -91,6 +98,22 @@ public class frag_map_dashboard2 extends Fragment {
             }
         };
         onBackPressedDispatcher.addCallback(getViewLifecycleOwner(), callback);
+        //BottomSheet
+        bottomSheet = view.findViewById(R.id.bottomsheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setPeekHeight(0);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        ImageView hideSheet = view.findViewById(R.id.hideSheet);
+
+        ScrollView scrollView = view.findViewById(R.id.scrollview);
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        hideSheet.setOnClickListener(v -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         return view;
     }
 }
