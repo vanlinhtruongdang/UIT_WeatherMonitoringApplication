@@ -1,233 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="310dp"
-    tools:context=".frag_map_dashboard2"
-    android:background="@drawable/bgr_map_dashboard">
-    <ScrollView
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".frag_map_dashboard2">
+    <LinearLayout
+        android:id="@+id/bottomsheet"
+        android:background="@drawable/bgr_map_dashboard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:paddingTop="5dp">
+        android:layout_height="350dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:orientation="vertical"
+        android:padding="15dp"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:src="@drawable/icon_baseline_remove"
+            app:tint="@color/white"
+            android:id="@+id/hideSheet"/>
         <LinearLayout
-            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icon_light"
+                android:layout_marginEnd="10dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Block B Weather Station"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/interblack"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NodeID: 6iWtSbgqMQsVq8RPkJJ9vo"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/regular" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ffffff"
+            android:layout_marginBottom="10dp"/>
+        <ScrollView
+            android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal"
-            android:padding="20dp">
+            android:paddingTop="5dp">
             <LinearLayout
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp">
-                <RelativeLayout
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/item_map_dashboard"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:orientation="vertical">
-                        <TextView
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/item_map_dashboard"
+                        android:padding="10dp">
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="NodeID"
-                            android:textColor="@color/white"
-                            android:textSize="15dp" />
-                        <TextView
-                            android:id="@+id/node_id1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="20°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/regular"
+                                android:text="Latitude"
+                                android:textColor="@color/white"
+                                android:textSize="15dp" />
+                            <TextView
+                                android:id="@+id/latitude1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/interbold"
+                                android:text="20°C"
+                                android:textColor="@color/white"
+                                android:textSize="30dp" />
+                        </LinearLayout>
+                    </RelativeLayout>
 
-                    </LinearLayout>
-                </RelativeLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp">
-                <RelativeLayout
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/item_map_dashboard"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Latitude"
-                            android:textColor="@color/white"
-                            android:textSize="15dp" />
-                        <TextView
-                            android:id="@+id/latitude1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="20°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-                    </LinearLayout>
-                </RelativeLayout>
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/item_map_dashboard"
+                        android:padding="10dp">
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp">
-                <RelativeLayout
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/regular"
+                                android:text="Longtitude"
+                                android:textColor="@color/white"
+                                android:textSize="15dp" />
+                            <TextView
+                                android:id="@+id/longtitude1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/interbold"
+                                android:text="20°C"
+                                android:textColor="@color/white"
+                                android:textSize="30dp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/item_map_dashboard"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Longtitude"
-                            android:textColor="@color/white"
-                            android:textSize="15dp" />
-                        <TextView
-                            android:id="@+id/longtitude1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="20°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-                    </LinearLayout>
-                </RelativeLayout>
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/item_map_dashboard"
+                        android:padding="10dp">
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp">
-                <RelativeLayout
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/regular"
+                                android:text="Brightness"
+                                android:textColor="@color/white"
+                                android:textSize="15dp" />
+                            <TextView
+                                android:id="@+id/brightness"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/interbold"
+                                android:text="20°C"
+                                android:textColor="@color/white"
+                                android:textSize="30dp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/item_map_dashboard"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:orientation="vertical">
-                        <TextView
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/item_map_dashboard"
+                        android:padding="10dp">
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Brightness"
-                            android:textColor="@color/white"
-                            android:textSize="15dp" />
-                        <TextView
-                            android:id="@+id/brightness"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="20°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-                    </LinearLayout>
-                </RelativeLayout>
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/regular"
+                                android:text="Colour Temp"
+                                android:textColor="@color/white"
+                                android:textSize="15dp" />
+                            <TextView
+                                android:id="@+id/colorTemp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/interbold"
+                                android:text="20°C"
+                                android:textColor="@color/white"
+                                android:textSize="30dp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/item_map_dashboard"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/regular"
-                            android:text="Colour Temp"
-                            android:textColor="@color/white"
-                            android:textSize="15dp" />
-                        <TextView
-                            android:id="@+id/colorTemp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/interbold"
-                            android:text="20°C"
-                            android:textColor="@color/white"
-                            android:textSize="30dp" />
-                    </LinearLayout>
-                </RelativeLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-
-
-</FrameLayout>
+        </ScrollView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
