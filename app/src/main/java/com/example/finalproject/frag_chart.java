@@ -140,6 +140,7 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
     }
 
     private void setupLineChart() {
+        lineChart.clear();
         lineChart.getDescription().setEnabled(false);
         lineChart.setDragEnabled(true);
         lineChart.setScaleEnabled(true);
@@ -169,7 +170,6 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
             entries.add(new Entry(point.getX(), point.getY()));
         }
         LineDataSet dataSet = new LineDataSet(entries, Label);
-
         dataSet.setDrawValues(false);
         dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         dataSet.setLineWidth(2.0f);

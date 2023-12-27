@@ -54,10 +54,10 @@ public class frag_home extends Fragment {
     private double MinZoom = 18.0;
     private double MaxZoom = 21.0;
     private double ZoomLevel = 19.5;
-    private GeoPoint UITLocation = new GeoPoint(10.870, 106.80324);
+    private GeoPoint UITLocation = new GeoPoint(10.8698, 106.80315);
     private GeoPoint Station1 = new GeoPoint(10.869778736885038, 106.80280655508835);
     private GeoPoint Station2 = new GeoPoint(10.869778736885038, 106.80345028525176);
-    private Button btn_fullScreen = null;
+    private Button btn_fullScreen = null, btn_location = null, btn_center = null;
     private TextView timeTextView = null, dayOfWeekTextView = null, dateTextView = null;
 
     private static final long UPDATE_INTERVAL = 30000;
@@ -77,21 +77,6 @@ public class frag_home extends Fragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         wssClient = homeActivity.getSocket();
 
-        timeTextView = view.findViewById(R.id.tv_time);
-        dayOfWeekTextView = view.findViewById(R.id.tv_dow);
-        dateTextView = view.findViewById(R.id.tv_date);
-        btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
-
-        btn_fullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_home, new frag_map())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -107,10 +92,34 @@ public class frag_home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
+        timeTextView = view.findViewById(R.id.tv_time);
+        dayOfWeekTextView = view.findViewById(R.id.tv_dow);
+        dateTextView = view.findViewById(R.id.tv_date);
         displayDateTimeInfo(timeTextView, dayOfWeekTextView, dateTextView);
 
         map = view.findViewById(R.id.map);
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+        btn_fullScreen = view.findViewById(R.id.btn_fullscreen);
+        btn_location = view.findViewById(R.id.btn_location);
+        btn_location.setText(UITLocation.toString());
+        btn_fullScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_home, new frag_map())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        btn_center = view.findViewById(R.id.btn_center);
+        btn_center.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.getController().animateTo(UITLocation, ZoomLevel, ZoomSpeed);
+                btn_location.setText(UITLocation.toString());
+            }
+        });
+
         UpdateMark1(view);
         UpdateMark2(view);
 
@@ -238,11 +247,12 @@ public class frag_home extends Fragment {
             public void onFirstLayout(View v, int left, int top, int right, int bottom) {
                 map.setTileSource(TileSourceFactory.MAPNIK );
                 map.setMultiTouchControls(true);
+                map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
                 map.setMinZoomLevel(MinZoom);
                 map.setMaxZoomLevel(MaxZoom);
                 map.getController().setZoom(ZoomLevel);
-                map.setScrollableAreaLimitLatitude(10.890, 10.865, 100);
-                map.setScrollableAreaLimitLongitude(106.7, 106.806, 100);
+                map.setScrollableAreaLimitLatitude(10.875, 10.865, 100);
+                map.setScrollableAreaLimitLongitude(106.800, 106.806, 100);
                 map.getController().setCenter(UITLocation);
                 map.getOverlayManager().getTilesOverlay().setColorFilter(filter);
                 map.getOverlays().add(Station1Marker);
@@ -255,6 +265,7 @@ public class frag_home extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
+                btn_location.setText(Station1.toString());
                 UpdateMark1(view);
                 return true;
             }
@@ -263,6 +274,7 @@ public class frag_home extends Fragment {
         Station2Marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
+                btn_location.setText(Station2.toString());
                 UpdateMark2(view);
                 return true;
             }

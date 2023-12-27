@@ -17,17 +17,21 @@
             app:hintTextColor="@color/white"
             app:boxBackgroundColor="#00034C"
             android:textColorHint="@color/white"
-            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
             <AutoCompleteTextView
                 android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:id="@+id/autoComplete"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
                 android:inputType="none"
-                android:hint="Choose"
+                android:hint="Choose metrics"
+                android:background="@drawable/btn_blue"
                 app:simpleItems="@array/parameter_array" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -35,16 +39,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="20dp">
+            android:gravity="center_horizontal">
             <TextView
                 android:padding="15dp"
                 android:background="@drawable/btn_blue"
                 android:id="@+id/startTimeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="Start Time"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:clickable="true"
@@ -56,12 +60,13 @@
                 android:background="@drawable/btn_blue"
                 android:fontFamily="@font/regular"
                 android:id="@+id/endTimeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/startTimeTextView"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/white"
                 android:text="End Time"
+                android:textAlignment="center"
                 android:textSize="18sp"
                 android:clickable="true"/>
         </LinearLayout>
