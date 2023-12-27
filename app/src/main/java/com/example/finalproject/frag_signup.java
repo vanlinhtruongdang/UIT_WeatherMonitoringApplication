@@ -1,7 +1,6 @@
 package com.example.finalproject;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +21,18 @@ import org.jsoup.nodes.Element;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
+import timber.log.Timber;
 
+@AndroidEntryPoint
 public class frag_signup extends Fragment {
-    private ApiService apiService = null;
+    @Inject
+    ApiService apiService;
     private Button signUpButton = null;
     private TextInputEditText firstNameEditText = null;
     private TextInputEditText lastNameEditText = null;
@@ -57,9 +62,6 @@ public class frag_signup extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        apiService = mainActivity.getAPIService();
-
         signUpButton = view.findViewById(R.id.btn_entersignup);
         firstNameEditText = view.findViewById(R.id.et_fname);
         lastNameEditText = view.findViewById(R.id.et_lname);
@@ -82,7 +84,7 @@ public class frag_signup extends Fragment {
                     @Override
                     public void run() {
                         try {
-                            Call<ResponseBody> authUrlCall = apiService.getAuthUrl(
+                            Call<ResponseBody> authUrlCall = apiService.getAuthSession(
                                     "code",
                                     "openremote",
                                     "https://uiot.ixxc.dev/swagger/oauth2-redirect.html");
@@ -94,7 +96,7 @@ public class frag_signup extends Fragment {
                                     String RegUrl = ExtractFeature(HTML, "a", "href"); // Get registration URL
 
                                     // Step 2: request 2th HTTP GET to have submit form
-                                    Call<ResponseBody> RegUrlCall = apiService.getRegisterPage(RegUrl);
+                                    Call<ResponseBody> RegUrlCall = apiService.getPage(RegUrl);
                                     try {
                                         Response<ResponseBody> RegUrlResponse = RegUrlCall.execute();
                                         if (RegUrlResponse.isSuccessful())
@@ -116,23 +118,23 @@ public class frag_signup extends Fragment {
                                             Response<ResponseBody> SubmitRespond = SubmitCall.execute();
                                             if(SubmitRespond.code() == 200){
                                                 //Notification here
+                                                Timber.d(String.valueOf(SubmitRespond.code()));
 
-                                                Log.d("SignUp",Integer.toString(SubmitRespond.code()));
                                             }
                                             else if(SubmitRespond.code() == 401){
+                                                //Notification here
 
-                                            } else{
-                                                Log.d("SignUp",SubmitRespond.message().toString());
                                             }
+                                            else Timber.d(String.valueOf(SubmitRespond.code()));
                                         }
-                                        else Log.d("SignUp", "Sign up fail!");
+                                        else Timber.d("Sign up failed with unknown error!");;
 
-                                    } catch (Exception e) { Log.d("SignIn", e.toString()); }
+                                    } catch (Exception e) { Timber.d(e); }
                                 }
-                                else Log.d("SignUp", "Executing authenticate URL fail!");
+                                else Timber.d("Executing authenticate URL fail!");
 
-                            } catch (Exception e) { Log.d("SignUp", e.toString()); }
-                        } catch (Exception e) { Log.d("SignUp", e.toString()); }
+                            } catch (Exception e) { Timber.d(e); }
+                        } catch (Exception e) { Timber.d(e); }
                     }
                 });
             }

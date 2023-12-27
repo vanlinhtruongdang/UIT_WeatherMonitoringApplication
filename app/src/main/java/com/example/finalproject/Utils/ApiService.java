@@ -22,13 +22,13 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 public interface ApiService {
     @GET("auth/realms/master/protocol/openid-connect/auth")
-    Call<ResponseBody> getAuthUrl(
+    Call<ResponseBody> getAuthSession(
             @Query("response_type") String responseType,
             @Query("client_id") String clientId,
             @Query("redirect_uri") String redirectUri
     );
     @GET
-    Call<ResponseBody> getRegisterPage(@Url String url);
+    Call<ResponseBody> getPage(@Url String url);
     @POST
     @FormUrlEncoded
     Call<ResponseBody> signUp(
@@ -44,17 +44,44 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/auth/realms/master/protocol/openid-connect/token")
-    Call<Token> getToken(@Field("client_id") String client_id,
-                         @Field("username") String username,
-                         @Field("password") String password,
-                         @Field("grant_type") String grant_type);
+    Call<Token> getTokenWithCookies(@Field("client_id") String client_id,
+                                    @Field("username") String username,
+                                    @Field("password") String password,
+                                    @Field("grant_type") String grant_type);
+
+    @FormUrlEncoded
+    @POST
+    Call<ResponseBody> getTokenWithCookies(
+        @Url String url,
+        @Field("username") String username,
+        @Field("password") String password
+    );
+
+    @FormUrlEncoded
+    @POST("/auth/realms/master/protocol/openid-connect/token")
+    Call<Token> getTokenWithKeycloak(
+        @Field("client_id") String client_id,
+        @Field("username") String username,
+        @Field("password") String password,
+        @Field("grant_type") String grant_type
+    );
+
     @Headers({"Accept: application/json"})
     @POST("/api/master/asset/datapoint/5zI6XqkQVSfdgOrZ1MyWEf/attribute/{attributeName}")
-    Call<List<Point>> GetChart(@Header("Authorization") String token,
-                               @Path("attributeName") String attributeName,
+    Call<List<Point>> GetChart(@Path("attributeName") String attributeName,
                                @Body RequestBody Message);
-
-    @Headers({"accept: application/json"})
     @GET("/api/master/user/user")
     Call<User> getUser(@Header("Authorization") String token);
+
+    @POST("/auth/realms/master/account/password")
+    @FormUrlEncoded
+    Call<ResponseBody> changePassword(
+        @Field("stateChecker") String stateChecker,
+        @Field("password") String password,
+        @Field("password-new") String newPassword,
+        @Field("password-confirm") String confirmPassword,
+        @Field("login") String loginType // Save
+    );
+    @GET("/auth/realms/master/account/password")
+    Call<ResponseBody> getPasswordPage();
 }

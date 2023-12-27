@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import timber.log.Timber;
+
 public class frag_map_dashboard2 extends Fragment {
 
 
@@ -56,7 +58,7 @@ public class frag_map_dashboard2 extends Fragment {
 
         try{
             String formatString = uglyJson.substring(16,uglyJson.length());
-            Log.d("Mark2_db",formatString);
+            Timber.d(formatString);
             if (!formatString.equals("{}")) {
                 JSONObject jsonObject = new JSONObject(formatString);
                 String messageId = jsonObject.getString("messageId");
@@ -111,12 +113,7 @@ public class frag_map_dashboard2 extends Fragment {
                 return false;
             }
         });
-        hideSheet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
+        hideSheet.setOnClickListener(v -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         return view;
     }
 }

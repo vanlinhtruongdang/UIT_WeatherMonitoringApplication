@@ -4,14 +4,10 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import timber.log.Timber;
 
 public class frag_map_dashboard1 extends Fragment {
 
@@ -60,7 +58,7 @@ public class frag_map_dashboard1 extends Fragment {
 
         try{
             String formatString = uglyJson.substring(16,uglyJson.length());
-            Log.d("Mark1_db",formatString);
+            Timber.d(formatString);
             if (!formatString.equals("{}")) {
                 JSONObject jsonObject = new JSONObject(formatString);
                 String messageId = jsonObject.getString("messageId");
@@ -119,18 +117,11 @@ public class frag_map_dashboard1 extends Fragment {
         ImageView hideSheet = view.findViewById(R.id.hideSheet);
 
         ScrollView scrollView = view.findViewById(R.id.scrollview);
-        scrollView.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
+        scrollView.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
         });
-        hideSheet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
+        hideSheet.setOnClickListener(v -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         return view;
     }
 }

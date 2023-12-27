@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -30,7 +29,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.finalproject.Utils.MyWebSocketClient;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.tencent.mmkv.MMKV;
 
 import org.osmdroid.config.Configuration;
@@ -41,12 +39,17 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 
-import java.net.URISyntaxException;
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
+
+@AndroidEntryPoint
 public class frag_map extends Fragment {
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    private MyWebSocketClient wssClient = null;
+    @Inject
+    MyWebSocketClient wssClient;
     private MMKV kv = null;
     private MapView map = null;
     private long ZoomSpeed = 500;
@@ -59,10 +62,6 @@ public class frag_map extends Fragment {
     private Button btn_center = null;
     private String accessToken = null;
     private Fragment currentFragment = null;
-
-
-
-
 
     public static frag_map newInstance() {
         frag_map fragment = new frag_map();
@@ -89,8 +88,6 @@ public class frag_map extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        HomeActivity homeActivity = (HomeActivity) getActivity();
-        wssClient = homeActivity.getSocket();
         btn_center = view.findViewById(R.id.btn_center);
         map = view.findViewById(R.id.map);
         SetupMap(view,ctx);
@@ -251,12 +248,12 @@ public class frag_map extends Fragment {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station1Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
-                    wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
+                    wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:5zI6XqkQVSfdgOrZ1MyWEf:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"5zI6XqkQVSfdgOrZ1MyWEf\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d("Mark1", wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
+                Timber.d(wssClient.uglyJson.substring(16,wssClient.uglyJson.length()));
                 replaceFragment(new frag_map_dashboard1(),wssClient.uglyJson);//Hiển thị và thêm hiệu ứng
                 return true;
             }
@@ -266,7 +263,7 @@ public class frag_map extends Fragment {
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 map.getController().animateTo(Station2Marker.getPosition(), ZoomLevel, ZoomSpeed);
                 try {
-                    wssClient.send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
+                    wssClient.getClient().send("REQUESTRESPONSE:{\"messageId\":\"read-assets:6iWtSbgqMQsVq8RPkJJ9vo:AssetEvent2\",\"event\":{\"eventType\":\"read-assets\",\"assetQuery\":{\"ids\":[\"6iWtSbgqMQsVq8RPkJJ9vo\"]}}}");
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);

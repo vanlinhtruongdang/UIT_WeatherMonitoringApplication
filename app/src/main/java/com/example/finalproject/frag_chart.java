@@ -4,11 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -43,25 +42,29 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
+import timber.log.Timber;
 
+@AndroidEntryPoint
 public class frag_chart extends Fragment implements DateTimePickerFragment.OnDateTimeSetListener {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private ApiService apiService = null;
+    @Inject
+    ApiService apiService;
     private MMKV kv = null;
     private TextView startTimeTextView = null;
     private LineChart lineChart = null;
     private TextView endTimeTextView = null;
     private Button generateChartButton = null;
-    private Calendar startDateTime = null;
-    private Calendar endDateTime = null;
+    private Calendar startDateTime = null, endDateTime = null;
     private TextInputLayout textInputLayout = null;
     private String selectedMetrics = null;
-    private String accessToken = null;
 
     public frag_chart() {}
 
@@ -81,46 +84,25 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_chart, container, false);
 
-        kv = MMKV.defaultMMKV();
-        accessToken = kv.decodeString("AccessToken");
-
         AutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.autoComplete);
-
-        HomeActivity homeActivity = (HomeActivity) getActivity();
-        apiService = homeActivity.getAPIService();
 
         startTimeTextView = view.findViewById(R.id.startTimeTextView);
         endTimeTextView = view.findViewById(R.id.endTimeTextView);
+
         generateChartButton = view.findViewById(R.id.generateChartButton);
         lineChart = view.findViewById(R.id.lineChart);
+
         textInputLayout = view.findViewById(R.id.testss);
-        startTimeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDateTimePickerDialog(true);
-            }
-        });
 
-        endTimeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDateTimePickerDialog(false);
-            }
-        });
+        startTimeTextView.setOnClickListener(v -> showDateTimePickerDialog(true));
+        endTimeTextView.setOnClickListener(v -> showDateTimePickerDialog(false));
 
-        generateChartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setupLineChart();
-                generateChart();
-            }
+        generateChartButton.setOnClickListener(v -> {
+            setupLineChart();
+            generateChart();
         });
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedMetrics = parent.getItemAtPosition(position).toString();
-            }
-        });
+        autoCompleteTextView.setOnItemClickListener((parent, view1, position, id) ->
+                selectedMetrics = parent.getItemAtPosition(position).toString());
 
         //backPressed
         OnBackPressedDispatcher onBackPressedDispatcher = requireActivity().getOnBackPressedDispatcher();
@@ -203,10 +185,9 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
                     Mess.put("toTimestamp", endTimestamp);
                     Mess.put("amountOfPoints", 100);
 
-                    RequestBody requestBody = RequestBody.create(JSON, Mess.toString());
+                    RequestBody requestBody = RequestBody.create(Mess.toString(), JSON);
 
-                    Call<List<Point>> GetChart = apiService.GetChart("Bearer " + accessToken,
-                                                                     selectedMetrics,
+                    Call<List<Point>> GetChart = apiService.GetChart(selectedMetrics,
                                                                      requestBody);
                     Response<List<Point>> ChartResponse = GetChart.execute();
                     List<Point> listPoint = ChartResponse.body();
@@ -214,7 +195,7 @@ public class frag_chart extends Fragment implements DateTimePickerFragment.OnDat
                         populateChart(listPoint, selectedMetrics);
 
                 } catch (Exception e){
-                    Log.d("Chart", e.toString());
+                    Timber.d(e);
                 }
             });
         }
