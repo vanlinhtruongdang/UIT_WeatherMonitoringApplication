@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.finalproject.Utils.ApiService;
+import com.example.finalproject.Utils.CustomCookieJar;
 import com.google.android.material.textfield.TextInputEditText;
 import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
@@ -33,6 +34,8 @@ public class frag_signin extends Fragment {
     private Button btn_signIn = null;
     private MMKV kv = null;
     @Inject
+    CustomCookieJar cookieJar = null;
+    @Inject
     ApiService apiService = null;
     public frag_signin() {
     }
@@ -45,7 +48,6 @@ public class frag_signin extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        kv = MMKV.defaultMMKV();
     }
 
     @Override
@@ -61,6 +63,9 @@ public class frag_signin extends Fragment {
         password = view.findViewById(R.id.si_password);
         btn_signIn = view.findViewById(R.id.btn_signin);
         btn_signIn.setOnClickListener(v -> {
+            kv = MMKV.defaultMMKV();
+            kv.clearAll();
+            cookieJar.clear();
             ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
             networkExecutor.execute(() -> {
                 var getAuthPage = apiService.getAuthSession(

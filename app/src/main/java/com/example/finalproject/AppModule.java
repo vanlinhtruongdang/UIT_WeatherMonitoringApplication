@@ -23,15 +23,25 @@ import timber.log.Timber;
 public class AppModule {
     @Provides
     @Singleton
+    public static CustomCookieJar provideCustomCookieJar() {
+        return new CustomCookieJar();
+    }
+
+    @Provides
+    @Singleton
     public static HttpLoggingInterceptor provideHttpLoggingInterceptor() {
         return new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY);
     }
+
     @Provides
     @Singleton
-    public static OkHttpClient provideOkHttpClient(final HttpLoggingInterceptor logging) {
+    public static OkHttpClient provideOkHttpClient(
+        final CustomCookieJar cookieJar,
+        final HttpLoggingInterceptor logging
+    ) {
         return new OkHttpClient.Builder()
-                .cookieJar(new CustomCookieJar())
+                .cookieJar(cookieJar)
                 .addInterceptor(chain -> {
                     var host = chain.request().url().host();
                     var request = chain.request();

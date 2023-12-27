@@ -62,8 +62,6 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.17")
     implementation("com.tencent:mmkv:1.3.2")
     implementation("org.json:json:20231013")
-
-
 }
 
 // Allow references to generated code

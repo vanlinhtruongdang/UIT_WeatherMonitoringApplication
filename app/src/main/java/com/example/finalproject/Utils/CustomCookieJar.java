@@ -18,6 +18,11 @@ import timber.log.Timber;
 
 public class CustomCookieJar implements CookieJar {
     private final Map<String, Map<String, Cookie>> cookieMap = new HashMap<>();
+
+    public void clear() {
+        cookieMap.clear();
+    }
+
     @Override
     public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
         Timber.d(cookies.toString());
