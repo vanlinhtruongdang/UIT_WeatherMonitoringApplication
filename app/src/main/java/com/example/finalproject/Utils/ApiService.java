@@ -84,4 +84,17 @@ public interface ApiService {
     );
     @GET("/auth/realms/master/account/password")
     Call<ResponseBody> getPasswordPage();
+
+
+    @POST("/auth/realms/master/account")
+    @FormUrlEncoded
+    Call<ResponseBody> changeAccount(
+            @Field("stateChecker") String stateChecker,
+            @Field("email") String password,
+            @Field("firstName") String newPassword,
+            @Field("lastName") String confirmPassword,
+            @Field("submitAction") String submitType // Save
+    );
+    @GET("/auth/realms/master/account")
+    Call<ResponseBody> getAccountPage();
 }

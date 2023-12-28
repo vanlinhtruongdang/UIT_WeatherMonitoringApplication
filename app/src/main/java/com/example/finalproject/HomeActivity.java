@@ -24,7 +24,7 @@ public class HomeActivity extends MainActivity {
     private BottomNavigationView bottomNavigationView = null;
 
     @Inject
-    MyWebSocketClient webSocketClient;
+    public MyWebSocketClient webSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +38,20 @@ public class HomeActivity extends MainActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if(itemId == R.id.user) {
-                replaceFragment(new frag_user());
+                replaceFragment(new frag_user(),"frame_user");
                 return true;
             } else if (itemId == R.id.graph) {
-                replaceFragment(new frag_chart());
+                replaceFragment(new frag_chart(),"frame_chart");
                 return true;
             }
             return false;
         });
         fragmentManager = getSupportFragmentManager();
-        replaceFragment(new frag_home());
+        replaceFragment(new frag_home(),"frame_home");
 
         fab = findViewById(R.id.btn_home);
         fab.setOnClickListener(v -> {
-            replaceFragment(new frag_home());
+            replaceFragment(new frag_home(),"frame_home");
             bottomNavigationView.setSelectedItemId(R.id.fab);
         });
 
@@ -67,9 +67,9 @@ public class HomeActivity extends MainActivity {
         }
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, String tag) {
         FragmentTransaction Transaction = fragmentManager.beginTransaction();
-        Transaction.replace(R.id.frame_layout, fragment);
+        Transaction.replace(R.id.frame_layout, fragment, tag);
         Transaction.commit();
     }
 }

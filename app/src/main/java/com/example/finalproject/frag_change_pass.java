@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.finalproject.Utils.ApiService;
 import com.google.android.material.textfield.TextInputEditText;
+import com.tencent.mmkv.MMKV;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,6 +31,7 @@ import timber.log.Timber;
 public class frag_change_pass extends Fragment {
     private Button btn_back = null, btn_save = null;
     private TextInputEditText password = null, newPassword = null, confirmPassword = null;
+    private MMKV kv = null;
     @Inject
     ApiService apiService = null;
 
@@ -53,28 +56,41 @@ public class frag_change_pass extends Fragment {
 
         btn_back = view.findViewById(R.id.btn_back);
         btn_save = view.findViewById(R.id.btn_saveAcc);
-
+        kv = MMKV.defaultMMKV();
         btn_save.setOnClickListener(v -> {
-            var networkExecutor = Executors.newSingleThreadExecutor();
-            var getPasswordPageCall = apiService.getPasswordPage();
-            networkExecutor.execute(() -> {
-                try {
-                    var getPasswordPageExecuter = getPasswordPageCall.execute();
-                    var changePasswordHTML = getPasswordPageExecuter.body().string();
-                    var stateChecker = ExtractStateChecker(changePasswordHTML);
+            String act_password = kv.decodeString("password");
+            String pass = password.getText().toString();
+            String newPass = newPassword.getText().toString();
+            String confPass = confirmPassword.getText().toString();
+            if(pass.equals("") || newPass.equals("") || confPass.equals("")){
+                ToastMessage("Please fill all the field");
+            } else if(!pass.equals(act_password)){
+                ToastMessage("Password not correct");
+            } else if (!newPass.equals(confPass)) {
+                ToastMessage("Password confirm not match");
+            } else {
+                var networkExecutor = Executors.newSingleThreadExecutor();
+                var getPasswordPageCall = apiService.getPasswordPage();
+                networkExecutor.execute(() -> {
+                    try {
+                        var getPasswordPageExecuter = getPasswordPageCall.execute();
+                        var changePasswordHTML = getPasswordPageExecuter.body().string();
+                        var stateChecker = ExtractStateChecker(changePasswordHTML);
 
-                    var changePasswordCall = apiService.changePassword(
-                            stateChecker,
-                            password.getText().toString(),
-                            newPassword.getText().toString(),
-                            confirmPassword.getText().toString(),
-                            "Save"
-                    );
-                    changePasswordCall.execute();
-                } catch (Exception e){
-                    Timber.d(e);
-                }
-            });
+                        var changePasswordCall = apiService.changePassword(
+                                stateChecker,
+                                pass,
+                                newPass,
+                                confPass,
+                                "Save"
+                        );
+                        changePasswordCall.execute();
+                        ToastMessage("Password change successfully");
+                    } catch (Exception e){
+                        Timber.d(e);
+                    }
+                });
+            }
         });
 
         btn_back.setOnClickListener(v -> {
@@ -111,5 +127,16 @@ public class frag_change_pass extends Fragment {
         } else {
             return null;
         }
+    }
+    private void ToastMessage(String message){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                password.setText("");
+                newPassword.setText("");
+                confirmPassword.setText("");
+            }
+        });
     }
 }
