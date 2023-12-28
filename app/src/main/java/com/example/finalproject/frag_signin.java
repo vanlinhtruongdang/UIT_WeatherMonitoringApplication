@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.finalproject.Utils.ApiService;
 import com.example.finalproject.Utils.CustomCookieJar;
@@ -68,8 +69,7 @@ public class frag_signin extends Fragment {
         btn_signIn = view.findViewById(R.id.btn_signin);
         loadingDialog = new LoadingDialog(requireContext());
         btn_signIn.setOnClickListener(v -> {
-            loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            loadingDialog.show();
+
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -108,15 +108,27 @@ public class frag_signin extends Fragment {
                                 var token = tokenCall.execute();
 
                                 if(token.isSuccessful()){
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(getActivity(), "Login successfully", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                     String AccessToken = token.body().getAccess_token();
                                     kv.encode("AccessToken", AccessToken);
-
+                                    kv.encode("password",password.getText().toString());
                                     Intent intent = new Intent(getActivity(), HomeActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
                                     Timber.d(AccessToken);
                                 }
                                 else{
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            username.setText("");
+                                            password.setText("");
+                                            Toast.makeText(getActivity(), "Unauthorized", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                     Timber.d(token.message().toString());
                                 }
                             }
@@ -129,7 +141,8 @@ public class frag_signin extends Fragment {
                     }
                 }
             },2000);
-
+            loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            loadingDialog.show();
         });
     }
     protected String ExtractFeature(String html, String tag, String attribute) {

@@ -73,6 +73,7 @@ public class frag_user_option extends Fragment {
                     @Override
                     public void run() {
                         Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         getActivity().finish();
                         if (loadingDialog != null && loadingDialog.isShowing()) {
